@@ -3,8 +3,17 @@
   <el-container>
     <el-aside width="250px">Aside</el-aside>
     <el-container>
-      <el-header height="100px">
-        <SearchBar />
+      <el-header
+        height="100px"
+        style="
+          position: sticky;
+          top: 0;
+          background-color: rgba(255, 255, 255);
+          border-bottom: 1px solid var(--el-border-color);
+          z-index: 999;
+        "
+      >
+        <Footer />
       </el-header>
       <el-main>
         <router-view></router-view>

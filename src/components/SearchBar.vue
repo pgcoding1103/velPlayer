@@ -74,6 +74,7 @@
 </template>
 <style scoped>
   .searchbar {
+    flex: 1;
     position: relative;
     display: flex;
     justify-content: center;

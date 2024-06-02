@@ -3,8 +3,8 @@
   import { Icon } from '@iconify/vue'
   import useElementSize from '@/hooks/useElementSize.js'
   const props = defineProps({
-    cardlist: {
-      type: Object,
+    data: {
+      type: Array,
       required: true
     },
     columns: {
@@ -16,17 +16,15 @@
       default: undefined
     }
   })
+  const emits = defineEmits(['click'])
   const { width } = useElementSize('.cardlist')
   const imageLoadedCount = ref(0)
   const skeletonwidth = computed(
     () => (width.value - (props.columns - 1) * 20) / props.columns + 'px'
   )
-  const rowcount = computed(() =>
-    Math.ceil(props.cardlist.length / props.columns)
-  )
+  const rowcount = computed(() => Math.ceil(props.data.length / props.columns))
   const isloaded = computed(
-    () =>
-      imageLoadedCount.value && imageLoadedCount.value == props.cardlist.length
+    () => imageLoadedCount.value && imageLoadedCount.value == props.data.length
   )
   const imagePreLoad = cardlist => {
     cardlist.forEach(item => {
@@ -38,7 +36,7 @@
     })
   }
   watch(
-    () => props.cardlist,
+    () => props.data,
     newvalue => {
       imagePreLoad(newvalue)
     }
@@ -86,7 +84,7 @@
             style="max-width: 480px; border-radius: 20px"
             shadow="hover"
             :body-style="{ padding: '0px' }"
-            v-for="{ id, name, picUrl } in cardlist"
+            v-for="({ id, name, picUrl, ar }, index) in data"
             :key="id"
           >
             <div style="height: 100%; aspect-ratio: 1; overflow: hidden">
@@ -106,6 +104,7 @@
             <Icon
               icon="ic:round-play-circle"
               class="cardlist-content-item-playicon"
+              @click="$emit('click', { id, name, ar, picUrl, index }, data)"
             />
             <div class="cardlist-content-item-mask"></div>
           </el-card>
