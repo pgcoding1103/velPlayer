@@ -104,7 +104,7 @@
             <Icon
               icon="ic:round-play-circle"
               class="cardlist-content-item-playicon"
-              @click="$emit('click', { id, name, ar, picUrl, index }, data)"
+              @click="$emit('click', index)"
             />
             <div class="cardlist-content-item-mask"></div>
           </el-card>

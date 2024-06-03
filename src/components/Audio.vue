@@ -1,30 +1,60 @@
 <script setup>
   import { Icon } from '@iconify/vue'
-  import { usePlayer } from '@/store'
-  import { watch, ref, computed } from 'vue'
+  import useAudio from '../hooks/useAudio'
   import MODE from '@/config/mode'
-  const player = usePlayer()
-  function play() {
-    if (player.audio && player.paused) {
-      player.playAudio()
+  const {
+    audio,
+    updateMode,
+    mode,
+    isAudioPause,
+    play,
+    pause,
+    playingIndex,
+    currentTime,
+    randomSonglist,
+    songlist,
+    cover
+  } = useAudio()
+  function playOrPause() {
+    if (audio.value.paused) {
+      play(playingIndex.value)
     } else {
-      player.pauseAudio()
+      pause()
     }
   }
-
-  watch(
-    () => player.songUrl,
-    newVal => {
-      url.value = newVal
+  function loop() {
+    if (!audio.value.loop) {
+      console.log('loop')
+      updateMode(MODE.singleloop)
+    } else {
+      console.log('noloop')
+      updateMode(MODE.loop)
     }
-  )
+  }
+  function playNext() {
+    currentTime.value = 0
+    play(playingIndex.value + 1)
+  }
+  function playBack() {
+    currentTime.value = 0
+    play(playingIndex.value - 1)
+  }
+  function playRandom() {
+    if (mode.value == MODE.random) {
+      console.log('noRandom')
+      updateMode(MODE.loop)
+    } else {
+      console.log('random')
+      updateMode(MODE.random)
+    }
+  }
 </script>
 <template>
   <div class="audio">
     <div class="aidio-cover">
       <el-image
         style="width: 100%; height: 100%"
-        :src="player.cover"
+        :src="cover"
         :fit="fill"
       >
         <template #error>
@@ -39,30 +69,36 @@
     </div>
     <div class="audio-controls">
       <div>
-        <Icon icon="f7:shuffle" />
-      </div>
-      <div>
-        <Icon icon="fontisto:backward" />
-      </div>
-      <div>
         <Icon
-          :icon="player.paused ? 'fontisto:play' : 'fontisto:pause'"
-          class="play"
-          @click="play"
+          icon="f7:shuffle"
+          :class="mode == MODE.random ? 'audio-controls-random__active' : ''"
+          @click="playRandom"
         />
       </div>
       <div>
-        <Icon icon="fontisto:forward" />
+        <Icon
+          icon="fontisto:backward"
+          @click="playBack"
+        />
+      </div>
+      <div>
+        <Icon
+          :icon="isAudioPause ? 'fontisto:play' : 'fontisto:pause'"
+          class="play"
+          @click="playOrPause"
+        />
+      </div>
+      <div>
+        <Icon
+          icon="fontisto:forward"
+          @click="playNext"
+        />
       </div>
       <div>
         <Icon
           icon="iconamoon:playlist-repeat-list-fill"
-          @click="player.loop"
-          :class="[
-            player.audio.mode == MODE.singleloop
-              ? 'audio-controls-loop__active'
-              : ''
-          ]"
+          @click="loop"
+          :class="mode == MODE.singleloop ? 'audio-controls-loop__active' : ''"
         />
       </div>
     </div>
@@ -147,6 +183,9 @@
     color: #dedfe0;
   }
   .audio-controls-loop__active {
+    color: #409eff;
+  }
+  .audio-controls-random__active {
     color: #409eff;
   }
 </style>

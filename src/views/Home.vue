@@ -4,8 +4,10 @@
   import { guestlogin } from '@/api/user.js'
   import { getRecommendPlaylist } from '@/api/playlist.js'
   import { getRecommendSonglist } from '@/api/song.js'
-  import { usePlayer } from '@/store'
-  const player = usePlayer()
+  // import { usePlayer } from '@/store'
+  // const player = usePlayer()
+  import useAudio from '../hooks/useAudio'
+  const { updateSonglist, play } = useAudio()
   const songlist = ref({})
   const playlist = ref({})
   getRecommendSonglist().then(res => {
@@ -17,8 +19,9 @@
     playlist.value = res
   })
   guestlogin()
-  function play(e, e2) {
-    console.log(e, e2)
+  function playMusic(index) {
+    updateSonglist(JSON.parse(JSON.stringify(songlist.value)))
+    play(index)
   }
 </script>
 <template>
@@ -29,7 +32,7 @@
   <CardList
     :data="songlist"
     title="每日歌曲推荐"
-    @click="play"
+    @click="playMusic"
   />
 </template>
 <style scoped></style>
