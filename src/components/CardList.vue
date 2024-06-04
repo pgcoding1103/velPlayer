@@ -1,7 +1,7 @@
 <script setup>
-  import { computed, ref, watch } from 'vue'
-  import { Icon } from '@iconify/vue'
+  import { computed, ref, watchEffect } from 'vue'
   import useElementSize from '@/hooks/useElementSize.js'
+  const { width } = useElementSize('.cardlist')
   const props = defineProps({
     data: {
       type: Array,
@@ -17,40 +17,38 @@
     }
   })
   const emits = defineEmits(['click'])
-  const { width } = useElementSize('.cardlist')
-  const imageLoadedCount = ref(0)
-  const skeletonwidth = computed(
-    () => (width.value - (props.columns - 1) * 20) / props.columns + 'px'
+  const itemwidth = computed(
+    () => (width.value - (props.columns - 1) * 20) / props.columns
   )
-  const rowcount = computed(() => Math.ceil(props.data.length / props.columns))
-  const isloaded = computed(
-    () => imageLoadedCount.value && imageLoadedCount.value == props.data.length
-  )
-  const imagePreLoad = cardlist => {
-    cardlist.forEach(item => {
-      const img = new Image()
-      img.src = item.picUrl
-      img.onload = () => {
-        imageLoadedCount.value++
-      }
-    })
-  }
-  watch(
-    () => props.data,
-    newvalue => {
-      imagePreLoad(newvalue)
-    }
-  )
+  const rows = computed(() => Math.ceil(props.data.length / props.columns))
+
+  const imgLoadedCount = ref(0)
+  const loading = computed(() => imgLoadedCount.value < props.data.length)
+  watchEffect(() => {
+    Object.keys(props.data).length &&
+      props.data.forEach(item => {
+        const image = new Image()
+        image.src = item.picUrl
+        image.onload = () => {
+          imgLoadedCount.value++
+        }
+      })
+  })
 </script>
 <template>
   <div class="cardlist">
-    <el-skeleton
-      :loading="!isloaded"
-      :count="props.columns"
-      animated
-      :class="['cardlist-content', props.title ? 'cardlist-skeleton' : '']"
+    <div
+      class="cardlist-title"
+      v-if="!loading"
     >
-      <!-- 骨架屏 -->
+      <h2>{{ props.title }}</h2>
+    </div>
+    <el-skeleton
+      :count="data.length"
+      :loading="loading"
+      animated
+      class="cardlist-skeleton"
+    >
       <template #template>
         <div>
           <el-skeleton-item variant="image" />
@@ -70,121 +68,102 @@
                 variant="text"
                 style="margin-right: 16px"
               />
+              <el-skeleton-item
+                variant="text"
+                style="width: 30%"
+              />
             </div>
           </div>
         </div>
       </template>
-      <!-- 实际内容 -->
       <template #default>
-        <div class="cardlist-title">
-          <h2>{{ props.title }}</h2>
-        </div>
         <div class="cardlist-content">
-          <el-card
-            style="max-width: 480px; border-radius: 20px"
-            shadow="hover"
-            :body-style="{ padding: '0px' }"
-            v-for="({ id, name, picUrl, ar }, index) in data"
+          <div
+            v-for="({ id, name, picUrl }, index) in data"
             :key="id"
+            class="cardlist-content-item"
+            @click="emits('click', index)"
           >
-            <div style="height: 100%; aspect-ratio: 1; overflow: hidden">
-              <el-image
-                style="width: 100%"
-                :src="picUrl"
-                fit="cover"
-              />
-            </div>
-            <div style="padding: 14px">
-              <el-text
-                style="font-size: 16px; font-weight: bold"
-                line-clamp="1"
-                >{{ name }}
-              </el-text>
-            </div>
-            <Icon
-              icon="ic:round-play-circle"
-              class="cardlist-content-item-playicon"
-              @click="$emit('click', index)"
+            <img
+              :src="picUrl + `?param=${itemwidth}y${itemwidth}`"
+              alt=""
+              class="cardlist-content-item-cover"
             />
-            <div class="cardlist-content-item-mask"></div>
-          </el-card>
+            <div class="cardlist-content-item-name">
+              <el-text
+                tag="h2"
+                size="large"
+                line-clamp="1"
+                >{{ name }}</el-text
+              >
+            </div>
+            <div class="cardlist-content-item-playicon"></div>
+          </div>
         </div>
       </template>
     </el-skeleton>
   </div>
 </template>
 <style scoped>
-  .cardlist-content {
-    display: grid;
-    width: 100%;
-    grid-template-columns: repeat(v-bind(columns), 1fr);
-    grid-template-rows: repeat(v-bind(rowcount), 1fr);
-    gap: 20px;
-  }
-  .cardlist-skeleton {
-    padding-top: 70px;
-  }
-  .el-skeleton__image {
-    width: v-bind(skeletonwidth);
-    height: v-bind(skeletonwidth);
-  }
   .cardlist-title {
-    width: 100%;
-    height: 70px;
     padding: 20px;
   }
-
-  .el-card {
-    position: relative;
-    &:hover {
-      cursor: pointer;
-      .cardlist-content-item-mask,
+  .cardlist-content {
+    display: grid;
+    grid-template-columns: repeat(v-bind(columns), 1fr);
+    gap: 20px;
+    .cardlist-content-item {
+      position: relative;
+      transition: all 0.3s;
+      &:hover {
+        cursor: pointer;
+        .cardlist-content-item-mask {
+          opacity: 1;
+        }
+        .cardlist-content-item-cover {
+          transform: translateY(-10px);
+          box-shadow: var(--el-box-shadow);
+        }
+        .cardlist-content-item-playicon {
+          transform: translateY(-20px);
+          opacity: 1;
+        }
+      }
+      .cardlist-content-item-cover {
+        width: 100%;
+        aspect-ratio: 1;
+        border-radius: 20px;
+        transition: all 0.3s;
+      }
       .cardlist-content-item-playicon {
-        opacity: 1;
+        position: absolute;
+        right: 10px;
+        bottom: -10px;
+        z-index: 1;
+        width: 50px;
+        height: 50px;
+        color: #409eff;
+        background-image: url('@/assets/play.svg');
+        border-radius: 50%;
+        box-shadow: var(--el-box-shadow-dark);
+        transition: all 0.3s;
+        opacity: 0;
+      }
+      .cardlist-content-item-name {
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
     }
-    .cardlist-content-item-playicon {
-      position: absolute;
-      bottom: 50%;
-      left: 50%;
-      transform: translate(-50%, 50%);
-      font-size: 80px;
-      color: #1ed760;
-      box-sizing: var(--el-box-shadow-dark);
-      z-index: 1;
-      opacity: 0;
-      transition: all 0.2s;
-      box-sizing: border-box;
-      &::after {
-        position: absolute;
-        content: '';
-        bottom: 50%;
-        left: 50%;
-        width: 30px;
-        height: 30px;
-        transform: translate(-50%, 50%);
-        background-color: black;
-      }
-    }
-    .cardlist-content-item-mask {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      opacity: 0;
-      transition: opacity 0.3s;
-      /* &::after {
-        position: absolute;
-        content: '';
-        bottom: 50%;
-        left: 50%;
-        width: 30px;
-        height: 30px;
-        transform: translate(-50%, 50%);
-        background-color: black;
-      } */
+  }
+  .el-skeleton {
+    display: grid;
+    grid-template-columns: repeat(v-bind(columns), 1fr);
+    grid-template-rows: repeat(v-bind(rows), 1fr);
+    gap: 20px;
+    .el-skeleton__image {
+      width: v-bind(itemwidth + 'px');
+      height: v-bind(itemwidth + 'px');
     }
   }
 </style>
