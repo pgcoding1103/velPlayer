@@ -23,12 +23,14 @@
   const rows = computed(() => Math.ceil(props.data.length / props.columns))
 
   const imgLoadedCount = ref(0)
-  const loading = computed(() => imgLoadedCount.value < props.data.length)
+  const loading = computed(
+    () => imgLoadedCount.value == 0 || imgLoadedCount.value != props.data.length
+  )
   watchEffect(() => {
     Object.keys(props.data).length &&
       props.data.forEach(item => {
         const image = new Image()
-        image.src = item.picUrl
+        image.src = item.picUrl + `?param=${itemwidth}y${itemwidth}`
         image.onload = () => {
           imgLoadedCount.value++
         }
@@ -37,14 +39,8 @@
 </script>
 <template>
   <div class="cardlist">
-    <div
-      class="cardlist-title"
-      v-if="!loading"
-    >
-      <h2>{{ props.title }}</h2>
-    </div>
     <el-skeleton
-      :count="data.length"
+      :count="columns"
       :loading="loading"
       animated
       class="cardlist-skeleton"
@@ -77,6 +73,9 @@
         </div>
       </template>
       <template #default>
+        <div class="cardlist-title">
+          <h2>{{ props.title }}</h2>
+        </div>
         <div class="cardlist-content">
           <div
             v-for="({ id, name, picUrl }, index) in data"
@@ -161,9 +160,17 @@
     grid-template-columns: repeat(v-bind(columns), 1fr);
     grid-template-rows: repeat(v-bind(rows), 1fr);
     gap: 20px;
+    padding-top: 71px;
     .el-skeleton__image {
-      width: v-bind(itemwidth + 'px');
-      height: v-bind(itemwidth + 'px');
+      position: relative;
+      width: 100%;
+      height: 0;
+      padding-top: 100%;
+      svg {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+      }
     }
   }
 </style>
