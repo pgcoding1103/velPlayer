@@ -64,14 +64,14 @@
         </template>
       </el-image>
       <div class="audio-cover-mask">
-        <Icon icon="ri:expand-diagonal-2-line"></Icon>
+        <Icon icon="fluent:arrow-expand-20-regular"></Icon>
       </div>
     </div>
     <div class="audio-controls">
       <div>
         <Icon
           icon="f7:shuffle"
-          :class="mode == MODE.random ? 'audio-controls-random__active' : ''"
+          :id="mode == MODE.random ? 'audio-controls-random__active' : ''"
           @click="playRandom"
         />
       </div>
@@ -98,7 +98,7 @@
         <Icon
           icon="iconamoon:playlist-repeat-list-fill"
           @click="loop"
-          :class="mode == MODE.singleloop ? 'audio-controls-loop__active' : ''"
+          :id="mode == MODE.singleloop ? 'audio-controls-loop__active' : ''"
         />
       </div>
     </div>
@@ -137,11 +137,13 @@
         align-items: center;
         width: 100%;
         height: 100%;
-        font-size: 20px;
-        color: white;
+        font-size: 40px;
+        color: rgba(255, 255, 255, 0.7);
         opacity: 0;
-        background-color: rgba(0, 0, 0, 0.3);
+        background-color: rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(20px);
         transition: all 0.3s;
+        cursor: pointer;
       }
     }
     .audio-controls {
@@ -149,17 +151,20 @@
       display: flex;
       align-items: center;
       gap: 15px;
-      margin-left: 10px;
-      font-size: 20px;
+      margin-left: 20px;
+      font-size: 25px;
       & > div {
         display: flex;
         justify-content: center;
         align-items: center;
         width: 50px;
         height: 50px;
-        & > .iconify:hover {
-          color: #73767a;
-          transition: color 0.3s;
+        .iconify {
+          transition: all 0.3s;
+          &:hover {
+            transform: scale(1.2);
+            color: #73767a;
+          }
         }
         .cycle,
         random {
@@ -182,10 +187,10 @@
     background-color: #f4f4f5;
     color: #dedfe0;
   }
-  .audio-controls-loop__active {
+  #audio-controls-loop__active {
     color: #409eff;
   }
-  .audio-controls-random__active {
+  #audio-controls-random__active {
     color: #409eff;
   }
 </style>
