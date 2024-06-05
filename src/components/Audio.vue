@@ -9,15 +9,16 @@
     isAudioPause,
     play,
     pause,
-    playingIndex,
+    index,
     currentTime,
     randomSonglist,
     songlist,
-    cover
+    cover,
+    handleRandomClick
   } = useAudio()
   function playOrPause() {
     if (audio.value.paused) {
-      play(playingIndex.value)
+      play(index.value)
     } else {
       pause()
     }
@@ -33,11 +34,11 @@
   }
   function playNext() {
     currentTime.value = 0
-    play(playingIndex.value + 1)
+    play(index.value + 1)
   }
   function playBack() {
     currentTime.value = 0
-    play(playingIndex.value - 1)
+    play(index.value - 1)
   }
   function playRandom() {
     if (mode.value == MODE.random) {
@@ -46,6 +47,7 @@
     } else {
       console.log('random')
       updateMode(MODE.random)
+      handleRandomClick()
     }
   }
 </script>

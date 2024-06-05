@@ -19,9 +19,9 @@
     playlist.value = res
   })
   guestlogin()
-  function playMusic(index) {
+  function playMusic(index, id) {
     updateSonglist(JSON.parse(JSON.stringify(songlist.value)))
-    play(index)
+    play(index, id)
   }
 </script>
 <template>

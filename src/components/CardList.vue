@@ -81,7 +81,7 @@
             v-for="({ id, name, picUrl }, index) in data"
             :key="id"
             class="cardlist-content-item"
-            @click="emits('click', index)"
+            @click="emits('click', index, id)"
           >
             <img
               :src="picUrl + `?param=${itemwidth}y${itemwidth}`"
