@@ -26,7 +26,7 @@ export default defineConfig({
     postcss: {
       plugins: [
         postcss({
-          rootValue: 37.5,
+          rootValue: 16,
           propList: ['*']
         })
       ]
