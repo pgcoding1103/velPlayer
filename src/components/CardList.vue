@@ -20,6 +20,7 @@
   const itemwidth = computed(
     () => (width.value - (props.columns - 1) * 20) / props.columns
   )
+  const imgSize = computed(() => Math.ceil(itemwidth.value))
   const rows = computed(() => Math.ceil(props.data.length / props.columns))
 
   const imgLoadedCount = ref(0)
@@ -30,7 +31,7 @@
     Object.keys(props.data).length &&
       props.data.forEach(item => {
         const image = new Image()
-        image.src = item.picUrl + `?param=${itemwidth}y${itemwidth}`
+        image.src = item.picUrl + `?param=${imgSize}y${imgSize}`
         image.onload = () => {
           imgLoadedCount.value++
         }
@@ -84,7 +85,7 @@
             @click="emits('click', index, id)"
           >
             <img
-              :src="picUrl + `?param=${itemwidth}y${itemwidth}`"
+              :src="picUrl + `?param=${imgSize}y${imgSize}`"
               alt=""
               class="cardlist-content-item-cover"
             />
