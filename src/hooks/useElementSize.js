@@ -1,7 +1,8 @@
 import { nextTick, ref } from 'vue'
-const width = ref(0)
-const height = ref(0)
+
 const useElementSize = target => {
+  const width = ref(0)
+  const height = ref(0)
   const handleResize = () => {
     nextTick(() => {
       const el = document.querySelector(target)

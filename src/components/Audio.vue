@@ -2,6 +2,9 @@
   import { Icon } from '@iconify/vue'
   import useAudio from '../hooks/useAudio'
   import MODE from '@/config/mode'
+  import useElementSize from '@/hooks/useElementSize'
+  const { width } = useElementSize('.audio-songMsg-progress-bar')
+  import { computed, ref } from 'vue'
   const {
     audio,
     updateMode,
@@ -11,11 +14,35 @@
     pause,
     index,
     currentTime,
-    randomSonglist,
-    songlist,
+    alltime,
     cover,
-    handleRandomClick
+    songname,
+    artists,
+    handleRandomClick,
+    updateCurrentTime
   } = useAudio()
+  const strokewidth = ref(6) //进度条宽度
+  const alltimeFormated = computed(() => {
+    if (alltime.value) {
+      const minute = Math.floor(alltime.value / 60)
+      let second = Math.floor(alltime.value % 60)
+      second < 10 ? (second = '0' + second) : second
+      return `${minute}:${second}`
+    } else {
+      return '0:00'
+    }
+  })
+  const currentTimeFormated = computed(() => {
+    if (currentTime.value) {
+      const minute = Math.floor(currentTime.value / 60)
+      let second = Math.floor(currentTime.value % 60)
+      second < 10 ? (second = '0' + second) : second
+      return `${minute}:${second}`
+    } else {
+      return '0:00'
+    }
+  })
+  const progress = computed(() => (currentTime.value / alltime.value) * 100)
   function playOrPause() {
     if (audio.value.paused) {
       play(index.value)
@@ -25,30 +52,30 @@
   }
   function loop() {
     if (!audio.value.loop) {
-      console.log('loop')
       updateMode(MODE.singleloop)
     } else {
-      console.log('noloop')
       updateMode(MODE.loop)
     }
   }
   function playNext() {
-    currentTime.value = 0
     play(index.value + 1)
   }
   function playBack() {
-    currentTime.value = 0
     play(index.value - 1)
   }
   function playRandom() {
     if (mode.value == MODE.random) {
-      console.log('noRandom')
       updateMode(MODE.loop)
     } else {
-      console.log('random')
       updateMode(MODE.random)
       handleRandomClick()
     }
+  }
+  function handleProgressClick(e) {
+    const { offsetX } = e
+    const navigateProgress = offsetX / width.value
+    console.log(navigateProgress)
+    updateCurrentTime(alltime.value * navigateProgress)
   }
 </script>
 <template>
@@ -104,11 +131,38 @@
         />
       </div>
     </div>
-    <!-- <audio :src="url"></audio> -->
+    <div class="audio-songMsg">
+      <el-text
+        tag="b"
+        size="small"
+      >
+        {{ songname }}
+      </el-text>
+      <el-text
+        tag="p"
+        size="small"
+      >
+        {{ artists }}
+      </el-text>
+      <div class="audio-songMsg-progress">
+        <span>{{ currentTimeFormated }}</span>
+        <el-progress
+          :percentage="progress"
+          :show-text="false"
+          :stroke-width="strokewidth"
+          class="audio-songMsg-progress-bar"
+          @click="handleProgressClick"
+          @mouseenter="strokewidth = 15"
+          @mouseleave="strokewidth = 6"
+        />
+        <span>{{ alltimeFormated }}</span>
+      </div>
+    </div>
   </div>
 </template>
 <style scoped>
   .audio {
+    flex: 1;
     display: flex;
     justify-content: space-evenly;
     align-items: center;
@@ -149,11 +203,10 @@
       }
     }
     .audio-controls {
-      flex: 1;
       display: flex;
       align-items: center;
       gap: 15px;
-      margin-left: 20px;
+      margin: 0 20px;
       font-size: 25px;
       & > div {
         display: flex;
@@ -177,6 +230,26 @@
         }
       }
     }
+    .audio-songMsg {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 59px;
+      margin: 10px;
+      justify-content: space-between;
+      margin: 0 10px;
+      .audio-songMsg-progress {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        .el-progress {
+          flex: 1;
+          margin: 0 10px;
+        }
+      }
+    }
   }
   .audio-cover__error {
     display: flex;
@@ -188,6 +261,10 @@
     font-weight: 900;
     background-color: #f4f4f5;
     color: #dedfe0;
+  }
+  :deep(.el-progress-bar__outer) {
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
   }
   #audio-controls-loop__active {
     color: #409eff;

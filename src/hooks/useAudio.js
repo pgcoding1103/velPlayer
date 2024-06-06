@@ -7,7 +7,7 @@ const useAudio = (function () {
   let instance
 
   function createInstance() {
-    const sid = ref(-1) //当前播放的歌曲id
+    const sid = ref(0) //当前播放的歌曲id
     const mode = ref(MODE.loop)
     const songlist = ref([]) //非随机模式下的歌曲列表
     const audio = ref(new Audio())
@@ -15,6 +15,18 @@ const useAudio = (function () {
     const isAudioPause = ref(true) //当前音频是否暂停
     const currentTime = ref(0) //当前播放时间
     const cover = ref('') //播放封面
+    const randomSonglist = ref([])
+    let timer = null
+    const songname = computed(
+      () =>
+        (sid.value && songlist.value.find(item => item.id == sid.value).name) ||
+        ''
+    )
+    const artists = computed(() => {
+      if (!sid.value) return ''
+      const songitem = songlist.value.find(item => item.id == sid.value)
+      return songitem.ar.map(item => item.name).join('，')
+    })
     const index = computed(() => {
       if (mode.value == MODE.random) {
         return randomSonglist.value.findIndex(item => item.id == sid.value)
@@ -22,8 +34,10 @@ const useAudio = (function () {
         return songlist.value.findIndex(item => item.id == sid.value)
       }
     })
-    const randomSonglist = ref([])
-
+    const alltime = computed(
+      () =>
+        sid.value && songlist.value.find(item => item.id == sid.value).dt / 1000
+    )
     watch(
       () => mode.value,
       newMode => {
@@ -37,13 +51,29 @@ const useAudio = (function () {
         }
       }
     )
+    // 切歌时重置currentTime为0
+    watch(
+      () => sid.value,
+      () => {
+        currentTime.value = 0
+        clearInterval(timer)
+      }
+    )
     async function play(index = 0, id = 0) {
       if (id) {
         sid.value = id
         audio.value.src = await getSongUrl(id)
         cover.value = songlist.value[index].picUrl
+        audio.value.onplay = () => {
+          timer = setInterval(() => {
+            console.log(audio.value.currentTime)
+            currentTime.value = audio.value.currentTime
+          }, 1000)
+        }
         audio.value.onended = () => {
-          play(index + 1) //播放下一首
+          setTimeout(() => {
+            play(index + 1) //播放下一首
+          }, 1000)
         }
         isAudioPause.value = false
         audio.value.currentTime = currentTime.value
@@ -65,18 +95,28 @@ const useAudio = (function () {
         audio.value.src = await getSongUrl(songlist.value[index].id)
         cover.value = songlist.value[index].picUrl
       }
+      audio.value.onplay = () => {
+        timer = setInterval(() => {
+          currentTime.value = audio.value.currentTime
+        }, 1000)
+      }
       audio.value.onended = () => {
         play(index + 1) //播放下一首
       }
+
       isAudioPause.value = false
       audio.value.currentTime = currentTime.value
       audio.value.play()
     }
     function pause() {
       currentTime.value = audio.value.currentTime
-      console.log(currentTime.value)
       isAudioPause.value = true
       audio.value.pause()
+      clearInterval(timer)
+    }
+    function updateCurrentTime(time) {
+      // currentTime.value = time
+      audio.value.currentTime = time
     }
     function updateSonglist(list) {
       songlist.value = list
@@ -101,12 +141,16 @@ const useAudio = (function () {
       isAudioPause,
       index,
       currentTime,
+      alltime,
       cover,
       sid,
+      songname,
+      artists,
       play,
       pause,
       updateSonglist,
       updateMode,
+      updateCurrentTime,
       handleRandomClick
     }
   }
