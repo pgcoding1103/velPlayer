@@ -117,6 +117,8 @@ const useAudio = (function () {
     function updateCurrentTime(time) {
       // currentTime.value = time
       audio.value.currentTime = time
+      isAudioPause.value = false
+      audio.value.play()
     }
     function updateSonglist(list) {
       songlist.value = list
