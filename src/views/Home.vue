@@ -1,9 +1,9 @@
 <script setup>
   import { ref } from 'vue'
-  import CardList from '@/components/CardList.vue'
   import { guestlogin } from '@/api/user.js'
   import { getRecommendPlaylist } from '@/api/playlist.js'
   import { getRecommendSonglist } from '@/api/song.js'
+  import router from '@/router'
   // import { usePlayer } from '@/store'
   // const player = usePlayer()
   import useAudio from '../hooks/useAudio'
@@ -23,11 +23,15 @@
     updateSonglist(JSON.parse(JSON.stringify(songlist.value)))
     play(index, id)
   }
+  function navgetTo(index, id) {
+    router.push('/playlist?id=' + id)
+  }
 </script>
 <template>
   <CardList
     :data="playlist"
     title="每日歌单推荐"
+    @click="navgetTo"
   />
   <CardList
     :data="songlist"

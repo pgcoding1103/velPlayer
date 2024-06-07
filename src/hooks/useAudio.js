@@ -1,7 +1,7 @@
 import MODE from '@/config/mode'
 import { ref, watch, computed } from 'vue'
 import { getSongUrl } from '@/api/song'
-import { getRandomSonglist } from '@/utils/playlist'
+import { getRandomSonglist } from '@/utils/songlist'
 //单例模式
 const useAudio = (function () {
   let instance
@@ -93,7 +93,8 @@ const useAudio = (function () {
       } else {
         sid.value = songlist.value[index].id
         audio.value.src = await getSongUrl(songlist.value[index].id)
-        cover.value = songlist.value[index].picUrl
+        cover.value =
+          songlist.value[index].picUrl || songlist.value[index].al.picUrl
       }
       audio.value.onplay = () => {
         timer = setInterval(() => {
