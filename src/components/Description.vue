@@ -1,6 +1,11 @@
 <script setup>
+  import useAudio from '../hooks/useAudio'
   const props = defineProps({
     cover: {
+      type: String,
+      default: ''
+    },
+    bgCover: {
       type: String,
       default: ''
     },
@@ -21,10 +26,29 @@
       default: ''
     }
   })
+  const { play } = useAudio()
+  const playAll = () => {
+    play(0)
+  }
 </script>
 <template>
   <div class="description">
-    <div class="description-cover">
+    <div
+      v-if="props.bgCover"
+      class="description-bgcover"
+    >
+      <el-image
+        :src="props.bgCover"
+        alt=""
+        fit="cover"
+        style="width: 100%"
+      ></el-image>
+      <div class="description-mask"></div>
+    </div>
+    <div
+      v-else
+      class="description-cover"
+    >
       <el-image
         :src="props.cover"
         alt=""
@@ -62,19 +86,44 @@
         class="description-content-desc"
         >{{ props.desc }}</el-text
       >
+      <div>
+        <el-button
+          type="primary"
+          @click="playAll"
+          >播放全部</el-button
+        >
+      </div>
     </div>
   </div>
 </template>
 <style scoped>
   .description {
-    display: flex;
-    justify-content: space-evenly;
+    position: relative;
+    /* display: flex;
+    justify-content: space-evenly; */
     width: 100%;
     height: 300px;
+    .description-bgcover {
+      position: absolute;
+      z-index: -2;
+      width: 100%;
+      height: 300px;
+      overflow: hidden;
+    }
+    .description-mask {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 50%;
+      /* 从下到上0-50% 从白色渐变到透明 */
+      background: linear-gradient(to top, #ffffff, transparent);
+      z-index: 0;
+    }
     .description-cover {
+      float: left;
       width: 300px;
       height: 300px;
-      padding: 0 20px;
+      padding: 20px;
       .el-image {
         width: 100%;
         aspect-ratio: 1;
@@ -82,10 +131,12 @@
       }
     }
     .description-content {
-      flex: 1;
+      float: left;
       display: flex;
       flex-direction: column;
       justify-content: center;
+      width: 500px;
+      height: 300px;
       padding: 20px;
       .el-text {
         align-self: flex-start;

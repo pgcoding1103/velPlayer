@@ -3,7 +3,7 @@
   import { parseSongList } from '../utils/songlist'
   import { getPlaylistSongs } from '../api/playlist'
   import useAudio from '../hooks/useAudio'
-  import { ref, computed } from 'vue'
+  import { ref, computed, onMounted } from 'vue'
   const props = defineProps({
     config: {
       type: Object,
@@ -15,7 +15,7 @@
     },
     height: {
       type: String,
-      default: '470px'
+      default: '770px'
     },
     originId: {
       type: String,
@@ -43,6 +43,9 @@
     updateSonglist(songlist.value)
     play(undefined, id)
   }
+  onMounted(() => {
+    updateSonglist(songlist.value)
+  })
   // loadSongList()
 </script>
 <template>
@@ -51,6 +54,7 @@
     infinite-scroll-distance="3500"
     class="songlist"
   >
+    <slot name="header"></slot>
     <li
       v-for="(
         { id, name, alltime, albumName, cover, addtime, artistName }, index

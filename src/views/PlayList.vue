@@ -23,13 +23,17 @@
   })
 </script>
 <template>
-  <Description
-    :cover="playlistData.coverImgUrl"
-    :title="playlistData.tags.join('&')"
-    :subtitle="playlistData.name"
-    :info="`播放量：${playlistData.playCount}`"
-    :desc="playlistData.description"
-  />
-  <SongList :originId="props.id" />
+  <SongList :originId="props.id">
+    <template #header>
+      <Description
+        v-if="playlistData"
+        :cover="playlistData.coverImgUrl"
+        :title="playlistData.tags.join('&')"
+        :subtitle="playlistData.name"
+        :info="`播放量：${playlistData.playCount}`"
+        :desc="playlistData.description"
+      />
+    </template>
+  </SongList>
 </template>
 <style scoped></style>
