@@ -15,7 +15,7 @@
     },
     height: {
       type: String,
-      default: '700px'
+      default: '470px'
     },
     originId: {
       type: String,

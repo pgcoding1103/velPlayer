@@ -3,6 +3,7 @@ import SearchBar from './SearchBar.vue'
 import Audio from './Audio.vue'
 import Footer from './Footer.vue'
 import SongList from './SongList.vue'
+import Description from './Description.vue'
 export default {
   install(app) {
     app.component('CardList', CardList)
@@ -10,5 +11,6 @@ export default {
     app.component('Footer', Footer)
     app.component('Audio', Audio)
     app.component('SongList', SongList)
+    app.component('Description', Description)
   }
 }

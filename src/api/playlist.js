@@ -23,14 +23,17 @@ export const getPlaylistDetail = id => {
       id
     }
   }).then(res => {
-    const { id, trackIds, name, tags, playCount, description } = res.playlist
+    console.log(res)
+    const { id, trackIds, name, tags, playCount, description, coverImgUrl } =
+      res.playlist
     return {
       id,
       trackIds,
       name,
       tags,
       playCount,
-      description
+      description,
+      coverImgUrl
     }
   })
 }
