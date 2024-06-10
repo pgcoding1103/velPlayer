@@ -17,6 +17,7 @@ export const getRecommendSonglist = () =>
 export const getSongUrl = id =>
   request('/song/url', {
     params: {
-      id
+      id,
+      cookie: localStorage.getItem('cookie')
     }
   }).then(res => res.data[0].url)

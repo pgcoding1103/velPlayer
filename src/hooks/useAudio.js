@@ -1,7 +1,7 @@
 import MODE from '@/config/mode'
 import { ref, watch, computed } from 'vue'
 import { getSongUrl } from '@/api/song'
-import { getRandomSonglist } from '@/utils/songlist'
+import { getRandomSonglist, getSongState } from '@/utils/songlist'
 //单例模式
 const useAudio = (function () {
   let instance
@@ -77,6 +77,7 @@ const useAudio = (function () {
         }
         isAudioPause.value = false
         audio.value.currentTime = currentTime.value
+        getSongState(songlist.value[index].fee)
         audio.value.play()
         return
       }
@@ -104,7 +105,7 @@ const useAudio = (function () {
       audio.value.onended = () => {
         play(index + 1) //播放下一首
       }
-
+      getSongState(songlist.value[index].fee)
       isAudioPause.value = false
       audio.value.currentTime = currentTime.value
       audio.value.play()

@@ -1,3 +1,4 @@
+import { ElMessage } from 'element-plus'
 const formatTime = dt => {
   const minute = Math.floor(dt / 1000 / 60)
   let second = Math.floor((dt / 1000) % 60)
@@ -47,4 +48,20 @@ export const parseSongList = songlist => {
       }
     }
   )
+}
+export const getSongState = fee => {
+  switch (fee) {
+    case 0:
+      ElMessage.info('暂无版权')
+      break
+    case 1:
+      ElMessage.error('当前曲目为VIP专享')
+      break
+    case 4:
+      ElMessage('当前曲目需要购买专辑')
+      break
+    case 8:
+      ElMessage('当前曲目非会员只能试听')
+      break
+  }
 }
