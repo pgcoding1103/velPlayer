@@ -34,7 +34,7 @@
       <Icon icon="mdi:search"></Icon>
       <el-input
         v-model="keywords"
-        style="width: 700px"
+        style="width: 400px"
         placeholder="请输入搜索内容"
         size="large"
         @input="handleKeywordsChange"
@@ -48,7 +48,7 @@
     >
       <el-card
         shadow="never"
-        style="width: 700px"
+        style="width: 400px"
       >
         <template #default>
           <div
