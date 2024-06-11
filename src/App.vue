@@ -15,7 +15,7 @@
       >
         <Footer />
       </el-header>
-      <el-main>
+      <el-main style="padding: 0">
         <router-view v-slot="{ Component }">
           <keep-alive include="Home">
             <component :is="Component" />

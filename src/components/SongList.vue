@@ -55,6 +55,32 @@
     class="songlist"
   >
     <slot name="header"></slot>
+    <!-- 列头 -->
+    <li class="songlist-item">
+      <div class="songlist-item-index"><el-text tag="p">#</el-text></div>
+      <div class="songlist-item-body"><el-text tag="p">标题</el-text></div>
+      <div class="songlist-item-album"><el-text tag="p">专辑</el-text></div>
+      <div
+        class="songlist-item-playcount"
+        v-if="props.config.playcount"
+      >
+        <el-text tag="p">播放量</el-text>
+      </div>
+
+      <div
+        class="songlist-item-addtime"
+        v-if="props.config.addtime"
+      >
+        <el-text tag="p">添加时间</el-text>
+      </div>
+      <div class="songlist-item-like"></div>
+      <div class="songlist-item-alltime">
+        <el-text tag="p">总时长</el-text>
+      </div>
+
+      <div class="songlist-item-more"></div>
+    </li>
+    <!-- 列表内容 -->
     <li
       v-for="(
         { id, name, alltime, albumName, cover, addtime, artistName }, index
@@ -85,20 +111,23 @@
             tag="b"
             size="large"
             :class="sid == id ? 'songlist-item-body-msg__playing' : ''"
+            line-clamp="1"
           >
             {{ name }}
           </el-text>
-          <el-text tag="p">{{ artistName }}</el-text>
+          <el-text
+            tag="p"
+            line-clamp="1"
+            >{{ artistName }}</el-text
+          >
         </div>
       </div>
       <div class="songlist-item-album">
-        <el-text tag="p">{{ albumName }}</el-text>
-      </div>
-      <div
-        class="songlist-item-playcount"
-        v-if="props.config.playcount"
-      >
-        <el-text tag="p">{{ playcount }}</el-text>
+        <el-text
+          tag="p"
+          line-clamp="1"
+          >{{ albumName }}</el-text
+        >
       </div>
       <div
         class="songlist-item-addtime"
@@ -116,19 +145,6 @@
       </div>
       <div class="songlist-item-more">
         <Icon icon="mingcute:more-1-fill"></Icon>
-        <!-- <el-popover
-          placement="top-start"
-          :width="200"
-          trigger="click"
-        >
-          <template #reference>
-            <el-button text>
-              
-            </el-button>
-          </template>
-
-          <el-button text>加入歌单</el-button>
-        </el-popover> -->
       </div>
     </li>
   </ul>
@@ -144,25 +160,35 @@
       padding: 10px;
       border-radius: 10px;
       transition: all 0.5s;
-      cursor: pointer;
-      &:hover {
+      &:not(:nth-child(2)):hover {
         background-color: #f2f3f5;
+        cursor: pointer;
         .songlist-item-like {
           opacity: 1;
         }
       }
+      &:nth-child(2) {
+        position: sticky;
+        top: 0;
+        background: linear-gradient(
+          to bottom,
+          white 50%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        z-index: 2;
+      }
       & > div {
         display: flex;
-        min-width: 100px;
+        width: 100px;
         justify-content: center;
         align-items: center;
       }
       .songlist-item-index {
-        min-width: 50px;
+        width: 50px;
       }
       .songlist-item-body {
         display: flex;
-        flex: 1;
+        width: 500px;
         .songlist-item-body-cover {
           width: 50px;
           height: 50px;
@@ -187,15 +213,13 @@
         transition: all 0.3s;
         cursor: pointer;
       }
+
       .songlist-item-album {
-        flex: 1;
+        width: 500px;
         padding: 0 50px;
-      }
-      .songlist-item-more {
       }
     }
   }
-
   .songlist-item-body-msg__playing {
     color: #409eff;
   }
