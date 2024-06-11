@@ -18,6 +18,6 @@ export const getSongUrl = id =>
   request('/song/url', {
     params: {
       id,
-      cookie: localStorage.getItem('cookie')
+      realIP: '116.25.146.177'
     }
   }).then(res => res.data[0].url)

@@ -52,10 +52,10 @@ export const parseSongList = songlist => {
 export const getSongState = fee => {
   switch (fee) {
     case 0:
-      ElMessage.info('暂无版权')
+      ElMessage('暂无版权')
       break
     case 1:
-      ElMessage.error('当前曲目为VIP专享')
+      ElMessage('当前曲目为VIP专享')
       break
     case 4:
       ElMessage('当前曲目需要购买专辑')
