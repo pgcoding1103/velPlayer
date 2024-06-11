@@ -21,3 +21,11 @@ export const getSongUrl = id =>
       realIP: '116.25.146.177'
     }
   }).then(res => res.data[0].url)
+//返回true/false
+export const getSongCanPlay = id =>
+  request('/check/music', {
+    params: {
+      id,
+      realIP: '116.25.146.177'
+    }
+  }).then(res => res.data.success)

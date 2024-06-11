@@ -1,4 +1,7 @@
 import { ElMessage } from 'element-plus'
+import { getSongCanPlay } from '../api/song'
+import useAudio from '../hooks/useAudio'
+
 const formatTime = dt => {
   const minute = Math.floor(dt / 1000 / 60)
   let second = Math.floor((dt / 1000) % 60)
@@ -49,19 +52,26 @@ export const parseSongList = songlist => {
     }
   )
 }
-export const getSongState = fee => {
+export const getSongState = async fee => {
   switch (fee) {
     case 0:
-      ElMessage('暂无版权')
+      const { sid } = useAudio()
+      const isCanPlay = await getSongCanPlay(sid)
+      if (isCanPlay) {
+        ElMessage.success('开始播放!')
+      } else {
+        ElMessage.error('暂无版权')
+      }
+
       break
     case 1:
-      ElMessage('当前曲目为VIP专享')
+      ElMessage.warning('当前曲目为VIP专享')
       break
     case 4:
-      ElMessage('当前曲目需要购买专辑')
+      ElMessage.warning('当前曲目需要购买专辑')
       break
     case 8:
-      ElMessage('当前曲目非会员只能播放最低音质')
+      ElMessage.info('当前曲目非会员只能播放最低音质')
       break
   }
 }

@@ -62,6 +62,7 @@ const useAudio = (function () {
     async function play(index = 0, id = 0) {
       if (id) {
         sid.value = id
+        index = songlist.value.findIndex(item => item.id == id)
         audio.value.src = await getSongUrl(id)
         cover.value = songlist.value[index].picUrl
         audio.value.onplay = () => {

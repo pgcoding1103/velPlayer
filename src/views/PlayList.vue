@@ -28,7 +28,7 @@
       <Description
         v-if="playlistData"
         :cover="playlistData.coverImgUrl"
-        :title="playlistData.tags.join('&')"
+        :title="playlistData.tags.join('、')"
         :subtitle="playlistData.name"
         :info="`播放量：${playlistData.playCount}`"
         :desc="playlistData.description"
