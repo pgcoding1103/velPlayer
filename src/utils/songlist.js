@@ -61,7 +61,7 @@ export const getSongState = fee => {
       ElMessage('当前曲目需要购买专辑')
       break
     case 8:
-      ElMessage('当前曲目非会员只能试听')
+      ElMessage('当前曲目非会员只能播放最低音质')
       break
   }
 }
