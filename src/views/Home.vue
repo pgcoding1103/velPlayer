@@ -4,8 +4,6 @@
   import { getRecommendPlaylist } from '@/api/playlist.js'
   import { getRecommendSonglist } from '@/api/song.js'
   import router from '@/router'
-  // import { usePlayer } from '@/store'
-  // const player = usePlayer()
   import useAudio from '../hooks/useAudio'
   const { updateSonglist, play } = useAudio()
   const songlist = ref({})

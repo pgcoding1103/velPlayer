@@ -1,7 +1,9 @@
 <script setup></script>
 <template>
   <el-container>
-    <el-aside width="250px">Aside</el-aside>
+    <el-aside width="250px">
+      <Aside />
+    </el-aside>
     <el-container>
       <el-header
         height="100px"
@@ -13,7 +15,7 @@
           z-index: 999;
         "
       >
-        <Footer />
+        <Header />
       </el-header>
       <el-main style="padding: 0">
         <router-view v-slot="{ Component }">

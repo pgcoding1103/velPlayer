@@ -1,5 +1,7 @@
 <script setup>
   import useAudio from '../hooks/useAudio'
+  import useElementSize from '../hooks/useElementSize'
+  const { height } = useElementSize('.description-content-desc')
   const props = defineProps({
     cover: {
       type: String,
@@ -84,6 +86,7 @@
         tag="p"
         type="info"
         class="description-content-desc"
+        line-clamp="3"
         >{{ props.desc }}</el-text
       >
       <div>
