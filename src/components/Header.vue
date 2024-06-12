@@ -2,7 +2,7 @@
 <template>
   <div class="footer">
     <Audio />
-    <SearchBar />
+    <User />
   </div>
 </template>
 <style scoped>

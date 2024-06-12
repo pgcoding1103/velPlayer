@@ -1,7 +1,13 @@
-<script setup></script>
+<script setup>
+  import { guestlogin } from '@/api/user.js'
+  guestlogin()
+</script>
 <template>
   <el-container>
-    <el-aside width="250px">
+    <el-aside
+      width="250px"
+      style="overflow: visible"
+    >
       <Aside />
     </el-aside>
     <el-container>

@@ -1,7 +1,7 @@
 <script setup></script>
 <template>
   <div class="aside">
-    <User />
+    <SearchBar />
   </div>
 </template>
 <style scoped>
@@ -11,6 +11,5 @@
     justify-content: center;
     align-items: center;
     width: 100%;
-    padding: 10px;
   }
 </style>

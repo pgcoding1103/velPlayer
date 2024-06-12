@@ -1,6 +1,5 @@
 <script setup>
   import { ref } from 'vue'
-  import { guestlogin } from '@/api/user.js'
   import { getRecommendPlaylist } from '@/api/playlist.js'
   import { getRecommendSonglist } from '@/api/song.js'
   import router from '@/router'
@@ -16,7 +15,7 @@
     console.log(res)
     playlist.value = res
   })
-  guestlogin()
+
   function playMusic(index, id) {
     updateSonglist(JSON.parse(JSON.stringify(songlist.value)))
     play(index, id)

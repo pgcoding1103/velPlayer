@@ -34,9 +34,8 @@
       <Icon icon="mdi:search"></Icon>
       <el-input
         v-model="keywords"
-        style="width: 400px"
+        style="width: 200px"
         placeholder="请输入搜索内容"
-        size="large"
         @input="handleKeywordsChange"
         @blur="isShowSuggestions = false"
         @focus="handleFocus"
@@ -48,7 +47,7 @@
     >
       <el-card
         shadow="never"
-        style="width: 400px"
+        style="width: 500px"
       >
         <template #default>
           <div
@@ -78,8 +77,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100%;
-    margin-left: 10px;
+    width: 100%;
+    height: 100px;
     .searchbar-input {
       position: relative;
       .iconify {
@@ -94,11 +93,11 @@
     }
     .searchbar-suggestions {
       position: absolute;
-      left: 50%;
+      left: 25px;
       top: 75px;
-      transform: translateX(-50%);
+      /* transform: translateX(-50%); */
 
-      z-index: 2;
+      z-index: 10000;
 
       a {
         p {
