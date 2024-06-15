@@ -1,6 +1,10 @@
 <script setup>
   import { guestlogin } from '@/api/user.js'
-  guestlogin()
+  import { useUser } from './store'
+  const { login } = useUser()
+  login().catch(() => {
+    guestlogin()
+  })
 </script>
 <template>
   <el-container>

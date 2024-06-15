@@ -37,3 +37,11 @@ export const getPlaylistDetail = id => {
     }
   })
 }
+//获取用户歌单
+export const getUserPlaylist = uid =>
+  request('/user/playlist', {
+    params: {
+      uid,
+      cookie: localStorage.getItem('cookie')
+    }
+  }).then(res => res.playlist)
