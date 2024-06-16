@@ -134,8 +134,8 @@
   )
 </script>
 <template>
-  <div class="aside-user">
-    <div class="aside-user-info">
+  <div class="user">
+    <div class="user-info">
       <el-popover
         placement="top-start"
         :width="200"
@@ -192,7 +192,7 @@
       @close="clearTimer"
     >
       <template #footer>
-        <div class="aside-user-dialog">
+        <div class="user-dialog">
           <!-- 手机号登录 -->
           <el-form
             v-if="loginWay"
@@ -243,7 +243,7 @@
           <!-- 二维码登录 -->
           <div
             v-else
-            class="aside-user-dialog-qrcode"
+            class="user-dialog-qrcode"
           >
             <el-image
               :src="QRImage"
@@ -253,7 +253,7 @@
             >
             </el-image>
             <div
-              class="aside-user-dialog-qrcode-state"
+              class="user-dialog-qrcode-state"
               v-show="QRState != 801 && !loading"
             >
               <div style="display: flex; flex-direction: column; gap: 10px">
@@ -283,7 +283,7 @@
   </div>
 </template>
 <style scoped>
-  .aside-user {
+  .user {
     display: flex;
     justify-content: flex-end;
     align-items: center;
@@ -291,12 +291,12 @@
     height: 80px;
     transition: all 0.3s;
     border-radius: 10px;
-    .aside-user-info {
+    .user-info {
       display: flex;
       justify-content: center;
       align-items: center;
     }
-    .aside-user-dialog {
+    .user-dialog {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -305,7 +305,7 @@
       aspect-ratio: 1;
       border-radius: 5px;
 
-      .aside-user-dialog-qrcode {
+      .user-dialog-qrcode {
         position: relative;
         display: flex;
         flex-direction: column;
@@ -313,7 +313,7 @@
         width: 250px;
         height: 250px;
       }
-      .aside-user-dialog-qrcode-state {
+      .user-dialog-qrcode-state {
         display: flex;
         justify-content: center;
         align-items: center;
