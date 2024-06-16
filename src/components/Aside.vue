@@ -2,6 +2,7 @@
 <template>
   <div class="aside">
     <SearchBar />
+    <NavigationBar />
     <UserPlayList />
   </div>
 </template>

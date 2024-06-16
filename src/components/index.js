@@ -7,6 +7,7 @@ import Description from './Description.vue'
 import Aside from './Aside.vue'
 import User from './User.vue'
 import UserPlayList from './UserPlayList.vue'
+import NavigationBar from './NavigationBar.vue'
 export default {
   install(app) {
     app.component('CardList', CardList)
@@ -18,5 +19,6 @@ export default {
     app.component('Aside', Aside)
     app.component('User', User)
     app.component('UserPlayList', UserPlayList)
+    app.component('NavigationBar', NavigationBar)
   }
 }

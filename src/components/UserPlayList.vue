@@ -1,5 +1,6 @@
 <script setup>
   import { onMounted, ref, watch, watchEffect } from 'vue'
+  import { Icon } from '@iconify/vue'
   import { getUserPlaylist } from '../api/user'
   import { useUser } from '../store'
   import { storeToRefs } from 'pinia'

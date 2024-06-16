@@ -34,7 +34,7 @@
       <Icon icon="mdi:search"></Icon>
       <el-input
         v-model="keywords"
-        style="width: 200px"
+        style="width: 220px"
         placeholder="请输入搜索内容"
         @input="handleKeywordsChange"
         @blur="isShowSuggestions = false"
