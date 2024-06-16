@@ -1,7 +1,7 @@
 import request from '../utils/request'
 //返回一个用于生成QR码的key
 export const createQRKey = () =>
-  request('/login/qr/key').then(res => res.data.unikey)
+  request('/login/qr/key', {}).then(res => res.data.unikey)
 //返回一个QR码图片的base64
 export const getBase64QRImage = key =>
   request(`/login/qr/create?key=${key}&qrimg=true`).then(res => res.data.qrimg)

@@ -1,5 +1,5 @@
 <script setup>
-  import { computed, ref } from 'vue'
+  import { computed, ref, watch } from 'vue'
   import {
     createQRKey,
     getBase64QRImage,
@@ -11,12 +11,13 @@
   import { useUser } from '../store'
   import { storeToRefs } from 'pinia'
 
+  let timer = null //定时器ID，用于定时检查二维码状态
   const { islogin, avatarUrl, username } = storeToRefs(useUser())
   const { login, logoutAccount: logout } = useUser()
   const dialogVisible = ref(false)
   const QRImage = ref(null)
   const QRKey = ref('')
-  const QRState = ref(801)
+  const QRState = ref(801) //800 为二维码过期,801 为等待扫码,802 为待确认,803 为授权登录成功
   const loading = ref(true) //二维码加载状态
   const loginWay = ref(0) //0:二维码登录 1:手机验证码登录
   const phone = ref('') //电话号
@@ -59,15 +60,8 @@
   //处理登录按钮点击
   async function handleLoginBtnClick() {
     dialogVisible.value = true
-    const key = await createQRKey()
-    const base64Url = await getBase64QRImage(key)
-    const img = new Image()
-    img.src = base64Url
-    img.onload = () => {
-      loading.value = false
-    }
-    QRImage.value = base64Url
-    // debugger
+    QRKey.value = await createQRKey()
+    startCheckQRState()
   }
   //获取验证码
   function getCaptcha() {
@@ -84,25 +78,60 @@
       }
     }, 1000)
   }
-  const timer = setInterval(async () => {
-    const { code, cookie } = await checkQRKey(QRKey.value)
-    switch (code) {
-      case 800:
-        QRState.value = 800
-        break //二维码过期
-      case 802:
-        QRState.value = 802
-        break //待确认
-      case 803:
-        QRState.value = 803
-        localStorage.setItem('cookie', cookie)
-        clearInterval(timer)
-        break //授权成功
-      default:
-        QRState.value = 801
-        break //等待扫码
+  //清除检测二维码状态定时器
+  function clearTimer() {
+    clearInterval(timer)
+  }
+  //开始定时检测二维码状态
+  function startCheckQRState() {
+    timer = setInterval(async () => {
+      const { code, cookie } = await checkQRKey(QRKey.value)
+      switch (code) {
+        case 800:
+          QRState.value = 800
+          createQRKey()
+          break //二维码过期
+        case 802:
+          QRState.value = 802
+          break //待确认
+        case 803:
+          QRState.value = 803
+          dialogVisible.value = false
+          login(cookie)
+          clearInterval(timer)
+          break //授权成功
+        default:
+          QRState.value = 801
+          break //等待扫码
+      }
+    }, 1000)
+  }
+  //切换登录方式
+  function toggleloginWay() {
+    loginWay.value = !loginWay.value
+    if (!loginWay.value) {
+      startCheckQRState()
+    } else {
+      clearTimer()
     }
-  }, 1000)
+  }
+  //刷新二维码
+  async function refreshQR() {
+    QRKey.value = await createQRKey()
+  }
+  watch(
+    () => QRKey.value,
+    async newval => {
+      loading.value = true
+      const base64Url = await getBase64QRImage(newval)
+      const img = new Image()
+      img.src = base64Url
+      img.onload = () => {
+        loading.value = false
+      }
+      QRImage.value = base64Url
+    }
+  )
 </script>
 <template>
   <div class="aside-user">
@@ -160,6 +189,7 @@
       v-model="dialogVisible"
       width="350"
       align-center
+      @close="clearTimer"
     >
       <template #footer>
         <div class="aside-user-dialog">
@@ -211,19 +241,41 @@
             </el-button>
           </el-form>
           <!-- 二维码登录 -->
-          <el-image
+          <div
             v-else
-            :src="QRImage"
-            alt=""
             class="aside-user-dialog-qrcode"
-            v-loading="loading"
           >
-          </el-image>
+            <el-image
+              :src="QRImage"
+              alt=""
+              v-loading="loading"
+              style="width: 100%; height: 100%"
+            >
+            </el-image>
+            <div
+              class="aside-user-dialog-qrcode-state"
+              v-show="QRState != 801 && !loading"
+            >
+              <div style="display: flex; flex-direction: column; gap: 10px">
+                <el-text tag="b">
+                  {{ QRStateText }}
+                </el-text>
+                <el-button
+                  type="primary"
+                  v-if="QRState == 800"
+                  @click="refreshQR"
+                  >刷新二维码
+                </el-button>
+              </div>
+            </div>
+          </div>
+          <el-text v-if="!loginWay">使用手机APP扫码登录</el-text>
           <!-- 切换登录方式 -->
           <el-button
             text
-            @click="loginWay = !loginWay"
-            >{{ !loginWay ? '账号登录' : '扫码登录' }}</el-button
+            type="primary"
+            @click="toggleloginWay"
+            >{{ !loginWay ? '账号登录?' : '扫码登录?' }}</el-button
           >
         </div>
       </template>
@@ -254,8 +306,24 @@
       border-radius: 5px;
 
       .aside-user-dialog-qrcode {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 250px;
+        height: 250px;
+      }
+      .aside-user-dialog-qrcode-state {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
         width: 100%;
-        aspect-ratio: 1;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.9);
       }
     }
   }
