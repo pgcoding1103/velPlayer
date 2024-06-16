@@ -6,6 +6,7 @@ import SongList from './SongList.vue'
 import Description from './Description.vue'
 import Aside from './Aside.vue'
 import User from './User.vue'
+import UserPlayList from './UserPlayList.vue'
 export default {
   install(app) {
     app.component('CardList', CardList)
@@ -16,5 +17,6 @@ export default {
     app.component('Description', Description)
     app.component('Aside', Aside)
     app.component('User', User)
+    app.component('UserPlayList', UserPlayList)
   }
 }

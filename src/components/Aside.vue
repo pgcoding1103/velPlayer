@@ -2,6 +2,7 @@
 <template>
   <div class="aside">
     <SearchBar />
+    <UserPlayList />
   </div>
 </template>
 <style scoped>
@@ -11,5 +12,6 @@
     justify-content: center;
     align-items: center;
     width: 100%;
+    height: 100%;
   }
 </style>

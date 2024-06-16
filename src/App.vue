@@ -10,7 +10,7 @@
   <el-container>
     <el-aside
       width="250px"
-      style="overflow: visible"
+      style="overflow: visible; height: 100vh; background-color: #fafcff"
     >
       <Aside />
     </el-aside>
@@ -28,7 +28,10 @@
         <Header />
       </el-header>
       <el-main style="padding: 0">
-        <router-view v-slot="{ Component }">
+        <router-view
+          v-slot="{ Component }"
+          :key="$route.fullPath"
+        >
           <keep-alive include="Home">
             <component :is="Component" />
           </keep-alive>

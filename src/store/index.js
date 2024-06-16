@@ -6,6 +6,7 @@ export const useUser = defineStore('user', () => {
   const username = computed(() => userinfo.value && userinfo.value.nickname)
   const avatarUrl = computed(() => userinfo.value && userinfo.value.avatarUrl)
   const islogin = computed(() => userinfo.value !== null)
+  const uid = computed(() => (userinfo.value && userinfo.value.userId) || 0)
   async function login(newcookie) {
     newcookie ? localStorage.setItem('cookie', newcookie) : ''
     const userBaseInfo = await getAccountLoginState()
@@ -30,6 +31,7 @@ export const useUser = defineStore('user', () => {
     avatarUrl,
     username,
     islogin,
+    uid,
     login,
     logoutAccount
   }
