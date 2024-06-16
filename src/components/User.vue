@@ -43,19 +43,12 @@
   async function captchaLogin() {
     const isRealCaptcha = await verifyCaptcha(phone.value, captcha.value)
     if (isRealCaptcha) {
-      const { cookie, account } = await loginByCaptcha(
-        phone.value,
-        captcha.value
-      )
-      console.log(cookie, account)
+      const { cookie } = await loginByCaptcha(phone.value, captcha.value)
       login(cookie)
       if (islogin) {
         dialogVisible.value = false //关闭弹窗
-      } else {
-        ElMessage.error('登录失败') //登录失败提示
       }
     }
-    console.log(isRealCaptcha)
   }
   //处理登录按钮点击
   async function handleLoginBtnClick() {
@@ -97,7 +90,7 @@
         case 803:
           QRState.value = 803
           dialogVisible.value = false
-          login(cookie)
+          const islogin = await login(cookie)
           clearInterval(timer)
           break //授权成功
         default:

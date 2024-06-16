@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { computed, reactive, ref } from 'vue'
 import { getAccountLoginState, logout } from '@/api/login'
+import { ElMessage } from 'element-plus'
 export const useUser = defineStore('user', () => {
   const userinfo = ref(null)
   const username = computed(() => userinfo.value && userinfo.value.nickname)
@@ -13,10 +14,10 @@ export const useUser = defineStore('user', () => {
     if (userBaseInfo) {
       //如果返回了账号信息，则表示登录成功，更新用户信息并设置登录状态为已登录
       userinfo.value = userBaseInfo
+      ElMessage.success(`欢迎回来，${username.value}`)
       return true
     } else {
-      //如果返回了账号信息，则表示登录失败，设置登录状态为未登录
-      throw new Error('登录失败')
+      ElMessage.warning('登录以使用更多功能！')
     }
   }
   function logoutAccount() {
@@ -24,6 +25,7 @@ export const useUser = defineStore('user', () => {
       // 清除用户信息
       userinfo.value = null
       localStorage.removeItem('cookie')
+      ElMessage.success('已退出登录')
     })
   }
   return {
