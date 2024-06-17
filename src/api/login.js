@@ -6,7 +6,7 @@ export const createQRKey = () =>
 export const getBase64QRImage = key =>
   request(`/login/qr/create?key=${key}&qrimg=true`).then(res => res.data.qrimg)
 /* 
-  检测QR码是否过期
+  检测QR码是否过期,返回状态码和cookie
   800: 二维码过期
   801: 等待扫码
   802: 扫码成功，等待确认

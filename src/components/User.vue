@@ -13,7 +13,7 @@
 
   let timer = null //定时器ID，用于定时检查二维码状态
   const { islogin, avatarUrl, username } = storeToRefs(useUser())
-  const { login, logoutAccount: logout } = useUser()
+  const { initUserInfo, removeUserInfo } = useUser()
   const dialogVisible = ref(false)
   const QRImage = ref(null)
   const QRKey = ref('')
@@ -44,10 +44,9 @@
     const isRealCaptcha = await verifyCaptcha(phone.value, captcha.value)
     if (isRealCaptcha) {
       const { cookie } = await loginByCaptcha(phone.value, captcha.value)
-      login(cookie)
-      if (islogin) {
-        dialogVisible.value = false //关闭弹窗
-      }
+      localStorage.setItem('cookie', cookie) //存储登录后的cookie
+      await initUserInfo()
+      dialogVisible.value = false
     }
   }
   //处理登录按钮点击
@@ -90,7 +89,8 @@
         case 803:
           QRState.value = 803
           dialogVisible.value = false
-          const islogin = await login(cookie)
+          localStorage.setItem('cookie', cookie) //存储登录后的cookie
+          await initUserInfo()
           clearInterval(timer)
           break //授权成功
         default:
@@ -161,7 +161,7 @@
             <el-text>{{ username }}</el-text>
             <el-button
               type="primary"
-              @click="logout"
+              @click="removeUserInfo"
             >
               退出登录
             </el-button>

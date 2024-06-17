@@ -1,6 +1,5 @@
 <script setup>
-  import { onMounted, ref, watch, watchEffect } from 'vue'
-  import { Icon } from '@iconify/vue'
+  import { ref, watchEffect } from 'vue'
   import { getUserPlaylist } from '../api/user'
   import { useUser } from '../store'
   import { storeToRefs } from 'pinia'
@@ -37,8 +36,16 @@
           style="width: 50px; height: 50px; border-radius: 5px"
         ></el-image>
         <div class="userPlayList-item-info">
-          <el-text tag="b">{{ name }}</el-text>
-          <el-text tag="p">{{ `${trackCount} 首歌曲` }}</el-text>
+          <el-text
+            tag="b"
+            line-clamp="1"
+            >{{ name }}</el-text
+          >
+          <el-text
+            tag="p"
+            line-clamp="1"
+            >{{ `${trackCount} 首歌曲` }}</el-text
+          >
         </div>
       </div>
     </li>
@@ -65,6 +72,7 @@
         background-color: #f2f3f5;
       }
       .userPlayList-item-info {
+        flex: 1;
         display: flex;
         flex-direction: column;
         justify-content: center;
