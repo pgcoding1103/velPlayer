@@ -31,7 +31,7 @@
     Object.keys(props.data).length &&
       props.data.forEach(item => {
         const image = new Image()
-        image.src = item.picUrl + `?param=${imgSize}y${imgSize}`
+        image.src = item.picUrl + `?param=${imgSize.value}y${imgSize.value}`
         image.onload = () => {
           imgLoadedCount.value++
         }
