@@ -12,5 +12,4 @@ const app = createApp(App)
 import { initLogin } from './utils/user'
 app.use(componenets).use(Icon).use(pinia).use(router)
 //初始化登录信息后再加载
-await initLogin()
-app.mount('#app')
+initLogin().then(() => app.mount('#app'))
