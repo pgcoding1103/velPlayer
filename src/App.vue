@@ -1,11 +1,4 @@
-<script setup>
-  import { guestlogin } from '@/api/user.js'
-  import { useUser } from './store'
-  const { login } = useUser()
-  login().catch(() => {
-    guestlogin()
-  })
-</script>
+<script setup></script>
 <template>
   <el-container>
     <el-aside
@@ -18,20 +11,14 @@
     >
       <Aside />
     </el-aside>
-    <el-container>
+    <el-container style="height: 100vh">
       <el-header
         height="100px"
-        style="
-          position: sticky;
-          top: 0;
-          background-color: rgba(255, 255, 255);
-          border-bottom: 1px solid var(--el-border-color);
-          z-index: 999;
-        "
+        style="border-bottom: 1px solid var(--el-border-color)"
       >
         <Header />
       </el-header>
-      <el-main>
+      <el-main style="flex: 1; overflow: scroll">
         <router-view
           v-slot="{ Component }"
           :key="$route.fullPath"
