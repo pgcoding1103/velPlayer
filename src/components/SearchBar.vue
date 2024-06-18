@@ -3,8 +3,9 @@
   import { Icon } from '@iconify/vue'
   import { getSearchSuggestions } from '@/api/search'
   import debounce from '@/utils/debounce'
+  import { getSearchResult } from '../api/search'
+  import router from '../router'
   const keywords = ref()
-
   const suggestions = ref({})
   const suggestionOrder = computed(() => {
     return suggestions.value['order']
@@ -27,6 +28,13 @@
       ? (isShowSuggestions.value = true)
       : (isShowSuggestions.value = false)
   }
+  const navigateToSearchResult = async _keywords => {
+    keywords.value = _keywords
+    const searchResult = await getSearchResult(keywords.value)
+    console.log(searchResult)
+    isShowSuggestions.value = false
+    router.push(`/search?keywords=${_keywords}`)
+  }
 </script>
 <template>
   <div class="searchbar">
@@ -39,6 +47,7 @@
         @input="handleKeywordsChange"
         @blur="isShowSuggestions = false"
         @focus="handleFocus"
+        @keydown.enter="navigateToSearchResult(keywords)"
       />
     </div>
     <div
@@ -93,11 +102,10 @@
     }
     .searchbar-suggestions {
       position: absolute;
-      left: 25px;
+      left: 15px;
       top: 75px;
       /* transform: translateX(-50%); */
-
-      z-index: 10000;
+      z-index: 3;
 
       a {
         p {
@@ -113,8 +121,8 @@
     padding: 0 40px;
   }
   .el-card {
-    background-color: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(60px);
+    background-color: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(40px);
     box-shadow: var(--el-box-shadow);
   }
 </style>

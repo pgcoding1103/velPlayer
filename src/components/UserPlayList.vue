@@ -4,14 +4,14 @@
   import { useUser } from '../store'
   import { storeToRefs } from 'pinia'
   import router from '../router'
-  import { parseUserPlaylist } from '../utils/playlist'
+  import { parsePlaylist } from '../utils/playlist'
   const { uid } = storeToRefs(useUser())
   const playlist = ref([])
   watchEffect(async () => {
     playlist.value.splice(
       0,
       playlist.value.length,
-      ...parseUserPlaylist(
+      ...parsePlaylist(
         await getUserPlaylist(uid.value, localStorage.getItem('cookie'))
       )
     )
@@ -20,7 +20,7 @@
 <template>
   <ul class="userPlayList">
     <li
-      v-for="{ id, name, coverImgUrl, trackCount } in playlist"
+      v-for="{ id, name, picUrl, trackCount } in playlist"
       :key="id"
     >
       <div
@@ -31,7 +31,7 @@
         @click="router.push(`/playlist?id=${id}`)"
       >
         <el-image
-          :src="coverImgUrl"
+          :src="picUrl"
           alt=""
           style="width: 50px; height: 50px; border-radius: 5px"
         ></el-image>

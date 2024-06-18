@@ -1,7 +1,7 @@
 <script setup>
   import { Icon } from '@iconify/vue'
   import { parseSongList } from '../utils/songlist'
-  import { getPlaylistSongs } from '../api/playlist'
+  // import { getPlaylistSongs } from '../api/playlist'
   import useAudio from '../hooks/useAudio'
   import { ref, computed, onMounted } from 'vue'
   const props = defineProps({
@@ -10,34 +10,32 @@
       default: {
         image: 1,
         playcount: 0,
-        alltime: 1
+        alltime: 1,
+        liheader: 1,
+        title: 0
       }
     },
     height: {
       type: String,
       default: '770px'
     },
-    originId: {
+    data: {
+      type: Array,
+      default: () => []
+    },
+    scrollLoad: {
+      type: Function,
+      default: () => {}
+    },
+    title: {
       type: String,
-      default: 0
+      default: ''
     }
   })
   const { updateSonglist, play, sid } = useAudio()
   const songlist = ref([])
-  const offset = ref(0)
-  const dataParsed = computed(() => parseSongList(songlist.value))
-  const loading = ref(false)
-  function loadSongList() {
-    if (!props.originId) return
-    if (!loading.value) {
-      console.log('加载')
-      loading.value = true
-      getPlaylistSongs(props.originId, offset.value, 100).then(res => {
-        songlist.value.push(...res)
-        offset.value += 100
-        loading.value = false
-      })
-    }
+  function load() {
+    props.scrollLoad()
   }
   function playMusic(id) {
     updateSonglist(songlist.value)
@@ -46,17 +44,28 @@
   onMounted(() => {
     updateSonglist(songlist.value)
   })
-  // loadSongList()
 </script>
 <template>
   <ul
-    v-infinite-scroll="loadSongList"
-    infinite-scroll-distance="3500"
+    v-infinite-scroll="load"
+    :infinite-scroll-distance="3500"
     class="songlist"
   >
-    <slot name="header"></slot>
+    <!-- 标题 -->
+    <div
+      class="songlist-title"
+      v-if="props.config.title"
+    >
+      <h2>{{ props.title }}</h2>
+    </div>
+    <slot name="header">
+      <div></div>
+    </slot>
     <!-- 列头 -->
-    <li class="songlist-item">
+    <li
+      class="songlist-item songlist-item__header"
+      v-if="props.config.liheader"
+    >
       <div class="songlist-item-index"><el-text tag="p">#</el-text></div>
       <div class="songlist-item-body"><el-text tag="p">标题</el-text></div>
       <div class="songlist-item-album"><el-text tag="p">专辑</el-text></div>
@@ -84,7 +93,7 @@
     <li
       v-for="(
         { id, name, alltime, albumName, cover, addtime, artistName }, index
-      ) in dataParsed"
+      ) in props.data"
       :key="id"
       class="songlist-item"
       @dblclick="() => playMusic(id)"
@@ -154,29 +163,23 @@
     height: v-bind(height);
     width: 100%;
     overflow-y: scroll;
+    .songlist-title {
+      padding: 20px;
+    }
     .songlist-item {
       display: flex;
       /* border-top: 1px solid var(--el-border-color); */
       padding: 10px;
       border-radius: 10px;
       transition: all 0.5s;
-      &:not(:nth-child(2)):hover {
+      &:hover {
         background-color: #f2f3f5;
         cursor: pointer;
         .songlist-item-like {
           opacity: 1;
         }
       }
-      &:nth-child(2) {
-        position: sticky;
-        top: 0;
-        background: linear-gradient(
-          to bottom,
-          white 50%,
-          rgba(255, 255, 255, 0) 100%
-        );
-        z-index: 2;
-      }
+
       & > div {
         display: flex;
         width: 100px;
@@ -218,6 +221,19 @@
         width: 500px;
         padding: 0 50px;
       }
+    }
+    .songlist-item__header:hover {
+      background: none;
+    }
+    .songlist-item__header {
+      position: sticky;
+      top: 0;
+      background: linear-gradient(
+        to bottom,
+        white 50%,
+        rgba(255, 255, 255, 0) 100%
+      );
+      z-index: 2;
     }
   }
   .songlist-item-body-msg__playing {

@@ -8,6 +8,11 @@ const routes = [
     path: '/playlist',
     component: () => import('../views/PlayList.vue'),
     props: route => ({ id: route.query.id })
+  },
+  {
+    path: '/search',
+    component: () => import('../views/Search.vue'),
+    props: route => ({ keywords: route.query.keywords })
   }
 ]
 export default createRouter({
