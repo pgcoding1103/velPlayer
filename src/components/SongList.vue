@@ -12,7 +12,8 @@
         playcount: 0,
         alltime: 1,
         liheader: 1,
-        title: 0
+        title: 0,
+        index: 1
       }
     },
     height: {
@@ -98,7 +99,10 @@
       class="songlist-item"
       @dblclick="() => playMusic(id)"
     >
-      <div class="songlist-item-index">
+      <div
+        class="songlist-item-index"
+        v-if="props.config.index"
+      >
         <el-text tag="p">
           {{ index + 1 }}
         </el-text>

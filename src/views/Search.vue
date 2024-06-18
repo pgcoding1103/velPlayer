@@ -14,7 +14,8 @@
     playcount: 0,
     alltime: 1,
     liheader: 0,
-    title: 1
+    title: 1,
+    index: 0
   }
   const searchResult = ref()
   const songlist = computed(
