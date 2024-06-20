@@ -45,6 +45,9 @@ export const useAudio = defineStore('audio', () => {
   const songlist = ref([])
   const randomSongList = ref([])
   const paused = ref(true)
+  const index = computed(() =>
+    currentSongList.value.findIndex(item => item.id == sid.value)
+  )
   //当前播放歌曲
   const currentSong = computed(() =>
     currentSongList.value.find(item => item.id == sid.value)
@@ -78,10 +81,10 @@ export const useAudio = defineStore('audio', () => {
     sid.value = id
     let nextIndex = 0
     const songUrl = await getSongUrl(id)
-    if (currentSong.value.index == currentSongList.value.length - 1) {
+    if (index.value == currentSongList.value.length - 1) {
       nextIndex = 0
     } else {
-      nextIndex = currentSong.value.index + 1
+      nextIndex = index.value + 1
     }
     await showSongState()
     audio.src = songUrl
