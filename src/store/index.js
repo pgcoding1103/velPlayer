@@ -68,7 +68,7 @@ export const useAudio = defineStore('audio', () => {
     () => currentSong.value && currentSong.value.artistName
   )
   //当前播放时长
-  const currentTime = computed(() => ct.value && formatTime(ct.value))
+  const currentTime = computed(() => ct.value && formatTime(ct.value * 1000))
   const currentSongList = computed(() =>
     mode.value === MODE.random ? randomSongList.value : songlist.value
   )
@@ -98,6 +98,11 @@ export const useAudio = defineStore('audio', () => {
   }
   function updateSongList(newSongList) {
     songlist.value = parseSongList(newSongList)
+  }
+  function updateProgress(progress) {
+    const newTime = progress * (currentSong.value.dt / 1000)
+    audio.currentTime = newTime
+    ct.value = newTime
   }
   function switchMode(newMode) {
     if (Object.values(MODE).includes(newMode)) {
@@ -160,6 +165,7 @@ export const useAudio = defineStore('audio', () => {
     updateSongList,
     playBack,
     playNext,
-    playContinue
+    playContinue,
+    updateProgress
   }
 })

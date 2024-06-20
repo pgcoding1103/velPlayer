@@ -14,7 +14,14 @@
     imgUrl,
     currentTime
   } = storeToRefs(useAudio())
-  const { playBack, playNext, switchMode, pause, playContinue } = useAudio()
+  const {
+    playBack,
+    playNext,
+    switchMode,
+    pause,
+    playContinue,
+    updateProgress
+  } = useAudio()
   const toggleRandom = () => {
     let newMode
     if (mode.value == MODE.random) {
@@ -43,6 +50,9 @@
   const playIcon = computed(() =>
     paused.value ? 'fontisto:play' : 'fontisto:pause'
   )
+  const handleProgressClick = e => {
+    updateProgress(e.offsetX / 400)
+  }
 </script>
 <template>
   <div class="audio">
@@ -118,8 +128,6 @@
           :stroke-width="strokewidth"
           class="audio-songMsg-progress-bar"
           @click="handleProgressClick"
-          @mouseenter="strokewidth = 15"
-          @mouseleave="strokewidth = 6"
         />
         <span>{{ duration }}</span>
       </div>
@@ -197,10 +205,10 @@
       }
     }
     .audio-songMsg {
-      flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
+      width: 500px;
       height: 59px;
       margin: 10px;
       justify-content: space-between;
@@ -210,9 +218,9 @@
         justify-content: space-between;
         align-items: center;
         width: 100%;
-        .el-progress {
-          flex: 1;
-          margin: 0 10px;
+        .audio-songMsg-progress-bar {
+          width: 400px;
+          transition: all 0.3s;
         }
       }
     }
