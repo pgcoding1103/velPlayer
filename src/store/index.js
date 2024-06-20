@@ -92,6 +92,7 @@ export const useAudio = defineStore('audio', () => {
       ct.value = audio.currentTime
     }, 1000)
     audio.onended = () => {
+      audio.currentTime = 0
       play(currentSongList.value[nextIndex].id)
     }
   }
@@ -101,8 +102,14 @@ export const useAudio = defineStore('audio', () => {
   function switchMode(newMode) {
     if (Object.values(MODE).includes(newMode)) {
       mode.value = newMode
-      if (newMode === MODE.random)
+      if (newMode === MODE.random) {
         randomSongList.value = getRandomSonglist(songlist.value)
+      }
+      if (newMode == MODE.loop) {
+        audio.loop = true
+      } else {
+        audio.loop = false
+      }
     }
   }
   function playBack() {

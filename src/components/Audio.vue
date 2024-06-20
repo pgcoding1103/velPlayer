@@ -93,7 +93,7 @@
         <Icon
           icon="iconamoon:playlist-repeat-list-fill"
           @click="toggleLoop"
-          :id="mode == MODE.singleloop ? 'audio-controls-loop__active' : ''"
+          :id="mode == MODE.loop ? 'audio-controls-loop__active' : ''"
         />
       </div>
     </div>
