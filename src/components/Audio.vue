@@ -1,89 +1,55 @@
 <script setup>
   import { Icon } from '@iconify/vue'
-  import useAudio from '../hooks/useAudio'
-  import MODE from '@/config/mode'
-  import useElementSize from '@/hooks/useElementSize'
-  const { width } = useElementSize('.audio-songMsg-progress-bar')
-  import { computed, ref } from 'vue'
+  import { storeToRefs } from 'pinia'
+  import { useAudio } from '../store'
+  import { MODE } from '@/global.config'
+  import { computed } from 'vue'
   const {
-    audio,
-    updateMode,
-    mode,
-    isAudioPause,
-    play,
-    pause,
-    index,
-    currentTime,
-    alltime,
-    cover,
-    songname,
+    name,
+    duration,
     artists,
-    handleRandomClick,
-    updateCurrentTime
-  } = useAudio()
-  const strokewidth = ref(6) //进度条宽度
-  const alltimeFormated = computed(() => {
-    if (alltime.value) {
-      const minute = Math.floor(alltime.value / 60)
-      let second = Math.floor(alltime.value % 60)
-      second < 10 ? (second = '0' + second) : second
-      return `${minute}:${second}`
+    mode,
+    paused,
+    progress,
+    imgUrl,
+    currentTime
+  } = storeToRefs(useAudio())
+  const { playBack, playNext, switchMode, pause, playContinue } = useAudio()
+  const toggleRandom = () => {
+    let newMode
+    if (mode.value == MODE.random) {
+      newMode = MODE.default
     } else {
-      return '0:00'
+      newMode = MODE.random
     }
-  })
-  const currentTimeFormated = computed(() => {
-    if (currentTime.value) {
-      const minute = Math.floor(currentTime.value / 60)
-      let second = Math.floor(currentTime.value % 60)
-      second < 10 ? (second = '0' + second) : second
-      return `${minute}:${second}`
+    switchMode(newMode)
+  }
+  const toggleLoop = () => {
+    let newMode
+    if (mode.value == MODE.loop) {
+      newMode = MODE.default
     } else {
-      return '0:00'
+      newMode = MODE.loop
     }
-  })
-  const progress = computed(() => (currentTime.value / alltime.value) * 100)
-  function playOrPause() {
-    if (audio.value.paused) {
-      play(index.value)
+    switchMode(newMode)
+  }
+  const togglePlay = () => {
+    if (paused.value) {
+      playContinue()
     } else {
       pause()
     }
   }
-  function loop() {
-    if (!audio.value.loop) {
-      updateMode(MODE.singleloop)
-    } else {
-      updateMode(MODE.loop)
-    }
-  }
-  function playNext() {
-    play(index.value + 1)
-  }
-  function playBack() {
-    play(index.value - 1)
-  }
-  function playRandom() {
-    if (mode.value == MODE.random) {
-      updateMode(MODE.loop)
-    } else {
-      updateMode(MODE.random)
-      handleRandomClick()
-    }
-  }
-  function handleProgressClick(e) {
-    const { offsetX } = e
-    const navigateProgress = offsetX / width.value
-    console.log(navigateProgress)
-    updateCurrentTime(alltime.value * navigateProgress)
-  }
+  const playIcon = computed(() =>
+    paused.value ? 'fontisto:play' : 'fontisto:pause'
+  )
 </script>
 <template>
   <div class="audio">
     <div class="aidio-cover">
       <el-image
         style="width: 100%; height: 100%"
-        :src="cover"
+        :src="imgUrl"
         :fit="fill"
       >
         <template #error>
@@ -101,7 +67,7 @@
         <Icon
           icon="f7:shuffle"
           :id="mode == MODE.random ? 'audio-controls-random__active' : ''"
-          @click="playRandom"
+          @click="toggleRandom"
         />
       </div>
       <div>
@@ -112,9 +78,9 @@
       </div>
       <div>
         <Icon
-          :icon="isAudioPause ? 'fontisto:play' : 'fontisto:pause'"
+          :icon="playIcon"
           class="play"
-          @click="playOrPause"
+          @click="togglePlay"
         />
       </div>
       <div>
@@ -126,7 +92,7 @@
       <div>
         <Icon
           icon="iconamoon:playlist-repeat-list-fill"
-          @click="loop"
+          @click="toggleLoop"
           :id="mode == MODE.singleloop ? 'audio-controls-loop__active' : ''"
         />
       </div>
@@ -136,7 +102,7 @@
         tag="b"
         size="small"
       >
-        {{ songname }}
+        {{ name }}
       </el-text>
       <el-text
         tag="p"
@@ -145,7 +111,7 @@
         {{ artists }}
       </el-text>
       <div class="audio-songMsg-progress">
-        <span>{{ currentTimeFormated }}</span>
+        <span>{{ currentTime }}</span>
         <el-progress
           :percentage="progress"
           :show-text="false"
@@ -155,7 +121,7 @@
           @mouseenter="strokewidth = 15"
           @mouseleave="strokewidth = 6"
         />
-        <span>{{ alltimeFormated }}</span>
+        <span>{{ duration }}</span>
       </div>
     </div>
   </div>

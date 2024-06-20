@@ -28,4 +28,4 @@ export const getSongCanPlay = id =>
       id,
       realIP: '116.25.146.177'
     }
-  }).then(res => res.data.success)
+  }).then(res => res.success)

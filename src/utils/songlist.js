@@ -1,8 +1,8 @@
 import { ElMessage } from 'element-plus'
 import { getSongCanPlay } from '../api/song'
-import useAudio from '../hooks/useAudio'
-
-const formatTime = dt => {
+import { useAudio } from '../store'
+//格式化时间
+export const formatTime = dt => {
   const minute = Math.floor(dt / 1000 / 60)
   let second = Math.floor((dt / 1000) % 60)
   second = second < 10 ? '0' + second : second
@@ -16,7 +16,9 @@ const formatArtistId = artist => {
 }
 
 //获取随机播放列表
-export const getRandomSonglist = (songlist, sid, index) => {
+export const getRandomSonglist = songlist => {
+  if (songlist.length == 0) return []
+  songlist = JSON.parse(JSON.stringify(songlist))
   let randomSonglist = []
   while (songlist.length) {
     let randomIndex = Math.floor(Math.random() * songlist.length)
@@ -36,26 +38,28 @@ export const getRandomSonglist = (songlist, sid, index) => {
 */
 export const parseSongList = songlist => {
   return JSON.parse(JSON.stringify(songlist)).map(
-    ({ id, name, ar: artist, al, dt, fee, mv, publishTime }) => {
+    ({ id, name, ar: artist, al, dt, fee, mv, publishTime }, index) => {
       return {
         id, //歌曲id
         name, //歌曲名字
         artistName: formatArtistName(artist), //歌手名称，
         artistId: formatArtistId(artist), //歌手id
         albumName: al.name, //专辑名称
-        cover: al.picUrl, //专辑封面s
-        alltime: formatTime(dt), //歌曲时长（默认毫秒）
+        imgUrl: al.picUrl, //专辑封面s
+        duration: formatTime(dt), //歌曲时长（默认毫秒）
         fee,
         mv, //是否有mv
-        publishTime //发布时间（时间戳）
+        publishTime, //发布时间（时间戳）
+        index,
+        dt
       }
     }
   )
 }
-export const getSongState = async fee => {
-  switch (fee) {
+export const showSongState = async () => {
+  const { state, sid } = useAudio()
+  switch (state) {
     case 0:
-      const { sid } = useAudio()
       const isCanPlay = await getSongCanPlay(sid)
       if (isCanPlay) {
         ElMessage.success('开始播放!')

@@ -3,8 +3,8 @@
   import { getRecommendPlaylist } from '@/api/playlist.js'
   import { getRecommendSonglist } from '@/api/song.js'
   import router from '@/router'
-  import useAudio from '../hooks/useAudio'
-  const { updateSonglist, play } = useAudio()
+  import { useAudio } from '@/store'
+  const { updateSongList, play } = useAudio()
   const songlist = ref({})
   const playlist = ref({})
   getRecommendSonglist().then(res => {
@@ -17,8 +17,8 @@
   })
 
   function playMusic(index, id) {
-    updateSonglist(JSON.parse(JSON.stringify(songlist.value)))
-    play(index, id)
+    updateSongList(songlist.value)
+    play(id)
   }
   function navgetTo(index, id) {
     router.push('/playlist?id=' + id)

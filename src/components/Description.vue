@@ -1,5 +1,5 @@
 <script setup>
-  import useAudio from '../hooks/useAudio'
+  // import useAudio from '../hooks/useAudio'
   import useElementSize from '../hooks/useElementSize'
   const { height } = useElementSize('.description-content-desc')
   const props = defineProps({
@@ -28,7 +28,7 @@
       default: ''
     }
   })
-  const { play } = useAudio()
+  // const { play } = useAudio()
   const playAll = () => {
     play(0)
   }

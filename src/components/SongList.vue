@@ -2,7 +2,7 @@
   import { Icon } from '@iconify/vue'
   import { parseSongList } from '../utils/songlist'
   // import { getPlaylistSongs } from '../api/playlist'
-  import useAudio from '../hooks/useAudio'
+  // import useAudio from '../hooks/useAudio'
   import { ref, computed, onMounted } from 'vue'
   const props = defineProps({
     config: {
@@ -33,7 +33,7 @@
       default: ''
     }
   })
-  const { updateSonglist, play, sid } = useAudio()
+  // const { updateSonglist, play, sid } = useAudio()
   const songlist = ref([])
   function load() {
     props.scrollLoad()
