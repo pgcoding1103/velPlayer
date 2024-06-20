@@ -1,6 +1,7 @@
 import { ElMessage } from 'element-plus'
 import { getSongCanPlay } from '../api/song'
 import { useAudio } from '../store'
+import { storeToRefs } from 'pinia'
 //格式化时间
 export const formatTime = dt => {
   const minute = Math.floor(dt / 1000 / 60)
@@ -25,7 +26,7 @@ export const getRandomSonglist = songlist => {
     randomSonglist.push(songlist[randomIndex])
     songlist.splice(randomIndex, 1)
   }
-  return randomSonglist
+  return parseSongList(randomSonglist)
 }
 //解析歌单信息
 /* 
@@ -57,8 +58,8 @@ export const parseSongList = songlist => {
   )
 }
 export const showSongState = async () => {
-  const { state, sid } = useAudio()
-  switch (state) {
+  const { state } = storeToRefs(useAudio())
+  switch (state.value) {
     case 0:
       const isCanPlay = await getSongCanPlay(sid)
       if (isCanPlay) {
@@ -75,7 +76,7 @@ export const showSongState = async () => {
       ElMessage.warning('当前曲目需要购买专辑')
       break
     case 8:
-      ElMessage.info('当前曲目非会员只能播放最低音质')
+      ElMessage.info('非会员只能播放最低音质')
       break
   }
 }

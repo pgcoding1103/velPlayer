@@ -5,8 +5,8 @@
   import router from '@/router'
   import { useAudio } from '@/store'
   const { updateSongList, play } = useAudio()
-  const songlist = ref({})
-  const playlist = ref({})
+  const songlist = ref([])
+  const playlist = ref([])
   getRecommendSonglist().then(res => {
     console.log(res)
     songlist.value = res

@@ -3,7 +3,8 @@
   import { storeToRefs } from 'pinia'
   import { useAudio } from '../store'
   import { MODE } from '@/global.config'
-  import { computed } from 'vue'
+  import { ref, computed, watch } from 'vue'
+  const showProgress = ref(true) //是否展示进度条，否则展示滑块
   const {
     name,
     duration,
@@ -12,7 +13,9 @@
     paused,
     progress,
     imgUrl,
-    currentTime
+    currentTime,
+    draging,
+    currentSong
   } = storeToRefs(useAudio())
   const {
     playBack,
@@ -47,20 +50,32 @@
       pause()
     }
   }
+  // 播放图标
   const playIcon = computed(() =>
     paused.value ? 'fontisto:play' : 'fontisto:pause'
   )
-  const handleProgressClick = e => {
-    updateProgress(e.offsetX / 400)
+  const sliderProgress = ref(0)
+
+  //进度条拖动
+  const handleProgressClick = t => {
+    updateProgress(t / 100)
+    sliderProgress.value = t
   }
+  watch(
+    () => progress.value,
+    newvalue => {
+      sliderProgress.value = parseFloat(newvalue)
+    }
+  )
 </script>
 <template>
   <div class="audio">
+    <!-- 歌曲封面 -->
     <div class="aidio-cover">
       <el-image
         style="width: 100%; height: 100%"
         :src="imgUrl"
-        :fit="fill"
+        fit="fill"
       >
         <template #error>
           <div class="audio-cover__error">
@@ -72,6 +87,7 @@
         <Icon icon="fluent:arrow-expand-20-regular"></Icon>
       </div>
     </div>
+    <!-- 播放控件 -->
     <div class="audio-controls">
       <div>
         <Icon
@@ -107,7 +123,11 @@
         />
       </div>
     </div>
-    <div class="audio-songMsg">
+    <!-- 歌曲信息&进度条 -->
+    <div
+      class="audio-songMsg"
+      v-show="currentSong"
+    >
       <el-text
         tag="b"
         size="small"
@@ -121,15 +141,28 @@
         {{ artists }}
       </el-text>
       <div class="audio-songMsg-progress">
-        <span>{{ currentTime }}</span>
+        <span style="width: 50px; text-align: center">{{ currentTime }}</span>
+        <!-- 点按进度条 -->
         <el-progress
+          v-if="showProgress"
           :percentage="progress"
           :show-text="false"
-          :stroke-width="strokewidth"
-          class="audio-songMsg-progress-bar"
-          @click="handleProgressClick"
+          @mouseenter="showProgress = false"
+          style="width: 350px; height: 24px"
         />
-        <span>{{ duration }}</span>
+        <!-- 拖拽进度条 -->
+        <el-slider
+          v-else
+          style="width: 350px"
+          v-model="sliderProgress"
+          size="small"
+          @mouseleave="showProgress = true"
+          @change="handleProgressClick"
+          @mousedown="draging = true"
+          @mouseup="draging = false"
+          :show-tooltip="false"
+        />
+        <span style="width: 50px; text-align: center">{{ duration }}</span>
       </div>
     </div>
   </div>
@@ -138,7 +171,7 @@
   .audio {
     flex: 1;
     display: flex;
-    justify-content: space-evenly;
+    justify-content: start;
     align-items: center;
     width: 500px;
     height: 100%;
@@ -218,10 +251,6 @@
         justify-content: space-between;
         align-items: center;
         width: 100%;
-        .audio-songMsg-progress-bar {
-          width: 400px;
-          transition: all 0.3s;
-        }
       }
     }
   }
@@ -236,9 +265,9 @@
     background-color: #f4f4f5;
     color: #dedfe0;
   }
-  :deep(.el-progress-bar__outer) {
-    transition: all 0.2s ease-in-out;
-    cursor: pointer;
+  :deep(.el-slider__button) {
+    width: 10px;
+    height: 10px;
   }
   #audio-controls-loop__active {
     color: #409eff;
