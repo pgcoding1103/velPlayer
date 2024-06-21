@@ -1,9 +1,11 @@
 <script setup>
   import { Icon } from '@iconify/vue'
   import { parseSongList } from '../utils/songlist'
-  // import { getPlaylistSongs } from '../api/playlist'
-  // import useAudio from '../hooks/useAudio'
   import { ref, computed, onMounted } from 'vue'
+  import { useAudio } from '../store'
+  import { storeToRefs } from 'pinia'
+  const { sid } = storeToRefs(useAudio())
+  const { updateSongList, play } = useAudio()
   const props = defineProps({
     config: {
       type: Object,
@@ -33,18 +35,13 @@
       default: ''
     }
   })
-  // const { updateSonglist, play, sid } = useAudio()
-  const songlist = ref([])
   function load() {
     props.scrollLoad()
   }
   function playMusic(id) {
-    updateSonglist(songlist.value)
-    play(undefined, id)
+    updateSongList(props.data)
+    play(id)
   }
-  onMounted(() => {
-    updateSonglist(songlist.value)
-  })
 </script>
 <template>
   <ul
@@ -93,7 +90,7 @@
     <!-- 列表内容 -->
     <li
       v-for="(
-        { id, name, alltime, albumName, cover, addtime, artistName }, index
+        { id, name, duration, albumName, imgUrl, addtime, artistName }, index
       ) in props.data"
       :key="id"
       class="songlist-item"
@@ -113,7 +110,7 @@
           v-if="props.config.image"
         >
           <el-image
-            :src="cover + `?param=${50}y${50}`"
+            :src="imgUrl + `?param=${50}y${50}`"
             alt=""
             style="width: 50px; aspect-ratio: 1"
             lazy
@@ -153,7 +150,7 @@
       </div>
       <div class="songlist-item-alltime">
         <el-text tag="p">
-          {{ alltime }}
+          {{ duration }}
         </el-text>
       </div>
       <div class="songlist-item-more">

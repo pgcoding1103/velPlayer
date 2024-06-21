@@ -10,9 +10,11 @@ export const formatTime = dt => {
   return `${minute}:${second}`
 }
 const formatArtistName = artist => {
+  if (!artist) return ''
   return artist.map(at => at.name).join('，')
 }
 const formatArtistId = artist => {
+  if (!artist) return []
   return artist.map(at => at.id)
 }
 
@@ -38,7 +40,11 @@ export const getRandomSonglist = songlist => {
   mv: u64, 非零表示有MV ID
 */
 export const parseSongList = songlist => {
-  return JSON.parse(JSON.stringify(songlist)).map(
+  if (songlist.length == 0) return []
+  songlist = JSON.parse(JSON.stringify(songlist))
+  //通过是否包含artistName字段来判断是否为解析后的数据，防止二次解析
+  if (songlist[0].artistName) return songlist
+  return songlist.map(
     ({ id, name, ar: artist, al, dt, fee, mv, publishTime }, index) => {
       return {
         id, //歌曲id
@@ -46,7 +52,7 @@ export const parseSongList = songlist => {
         artistName: formatArtistName(artist), //歌手名称，
         artistId: formatArtistId(artist), //歌手id
         albumName: al.name, //专辑名称
-        imgUrl: al.picUrl, //专辑封面s
+        imgUrl: al.picUrl, //专辑封面
         duration: formatTime(dt), //歌曲时长（默认毫秒）
         fee,
         mv, //是否有mv
@@ -58,10 +64,10 @@ export const parseSongList = songlist => {
   )
 }
 export const showSongState = async () => {
-  const { state } = storeToRefs(useAudio())
+  const { state, sid } = storeToRefs(useAudio())
   switch (state.value) {
     case 0:
-      const isCanPlay = await getSongCanPlay(sid)
+      const isCanPlay = await getSongCanPlay(sid.value)
       if (isCanPlay) {
         ElMessage.success('开始播放!')
       } else {
