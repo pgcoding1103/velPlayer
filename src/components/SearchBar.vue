@@ -25,8 +25,8 @@
   }, 300)
   const handleFocus = () => {
     Object.keys(suggestions.value).length != 0
-      ? (isInputFocus.value = true)
-      : (isInputFocus.value = false)
+      ? (isShowSuggestions.value = true)
+      : (isShowSuggestions.value = false)
   }
   const navigateToSearchResult = async (_keywords, type = 'all') => {
     isShowSuggestions.value = false
@@ -57,6 +57,7 @@
         placeholder="请输入搜索内容"
         @input="handleKeywordsChange"
         @focus="handleFocus"
+        @blur="isShowSuggestions = false"
         @keydown.enter="navigateToSearchResult(keywords)"
       />
     </div>
@@ -64,7 +65,6 @@
     <div
       v-show="isShowSuggestions"
       class="searchbar-suggestions"
-      @blur="isShowSuggestions = false"
     >
       <el-card
         shadow="never"
