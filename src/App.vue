@@ -18,7 +18,7 @@
       >
         <Header />
       </el-header>
-      <el-main style="flex: 1; overflow: scroll">
+      <el-main style="flex: 1; overflow-y: scroll">
         <router-view
           v-slot="{ Component }"
           :key="$route.fullPath"

@@ -67,7 +67,12 @@
     :config="config"
     height="350"
     title="歌曲"
-  />
+  >
+    <template #header>
+      <!-- 标题 -->
+      <h2 style="padding: 20px">歌曲</h2>
+    </template>
+  </SongList>
   <CardList
     :data="playlist"
     title="歌单"

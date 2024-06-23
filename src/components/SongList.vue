@@ -1,7 +1,7 @@
 <script setup>
   import { Icon } from '@iconify/vue'
   import { parseSongList } from '../utils/songlist'
-  import { ref, computed, onMounted } from 'vue'
+  import { ref, computed, onMounted, watchEffect } from 'vue'
   import { useAudio } from '../store'
   import { storeToRefs } from 'pinia'
   const { sid } = storeToRefs(useAudio())
@@ -14,25 +14,20 @@
         playcount: 0,
         alltime: 1,
         liheader: 1,
-        title: 0,
         index: 1
       }
     },
     height: {
       type: String,
-      default: '770px'
+      default: 'auto'
     },
     data: {
       type: Array,
-      default: () => []
+      default: () => [0]
     },
     scrollLoad: {
       type: Function,
       default: () => {}
-    },
-    title: {
-      type: String,
-      default: ''
     }
   })
   function load() {
@@ -49,15 +44,8 @@
     :infinite-scroll-distance="3500"
     class="songlist"
   >
-    <!-- 标题 -->
-    <div
-      class="songlist-title"
-      v-if="props.config.title"
-    >
-      <h2>{{ props.title }}</h2>
-    </div>
     <slot name="header">
-      <div></div>
+      <div style="width: 100%; height: 300px"></div>
     </slot>
     <!-- 列头 -->
     <li
@@ -87,6 +75,7 @@
 
       <div class="songlist-item-more"></div>
     </li>
+
     <!-- 列表内容 -->
     <li
       v-for="(
@@ -163,10 +152,6 @@
   .songlist {
     height: v-bind(height);
     width: 100%;
-    overflow-y: scroll;
-    .songlist-title {
-      padding: 20px;
-    }
     .songlist-item {
       display: flex;
       /* border-top: 1px solid var(--el-border-color); */
@@ -228,7 +213,7 @@
     }
     .songlist-item__header {
       position: sticky;
-      top: 0;
+      top: -20px;
       background: linear-gradient(
         to bottom,
         white 50%,
