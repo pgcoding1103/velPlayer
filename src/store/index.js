@@ -132,8 +132,13 @@ export const useAudio = defineStore('audio', () => {
       }
       if (newMode == MODE.loop) {
         audio.loop = true
+        ElMessage.success('单曲循环')
+      } else if (newMode == MODE.random) {
+        audio.loop = false
+        ElMessage.success('随机播放')
       } else {
         audio.loop = false
+        ElMessage.success('列表循环')
       }
     }
   }
