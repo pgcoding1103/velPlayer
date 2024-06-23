@@ -37,6 +37,7 @@ export const useUser = defineStore('user', () => {
   }
 })
 export const useAudio = defineStore('audio', () => {
+  let message = null //模式切换的提示实例
   const audio = new Audio()
   const mode = ref(MODE.default) //播放模式
   const sid = ref(0) //歌曲id
@@ -132,13 +133,16 @@ export const useAudio = defineStore('audio', () => {
       }
       if (newMode == MODE.loop) {
         audio.loop = true
-        ElMessage.success('单曲循环')
+        if (message) message.close()
+        message = ElMessage.success('单曲循环')
       } else if (newMode == MODE.random) {
         audio.loop = false
-        ElMessage.success('随机播放')
+        if (message) message.close()
+        message = ElMessage.success('随机播放')
       } else {
         audio.loop = false
-        ElMessage.success('列表循环')
+        if (message) message.close()
+        message = ElMessage.success('列表循环')
       }
     }
   }
