@@ -79,10 +79,10 @@
         </div>
         <div class="cardlist-content">
           <div
-            v-for="({ id, name, picUrl }, index) in data"
+            v-for="{ id, name, picUrl } in data"
             :key="id"
             class="cardlist-content-item"
-            @click="emits('click', index, id)"
+            @click="emits('click', id)"
           >
             <img
               :src="picUrl + `?param=${imgSize}y${imgSize}`"

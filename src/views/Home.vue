@@ -1,5 +1,5 @@
 <script setup>
-  import { ref } from 'vue'
+  import { onActivated, ref } from 'vue'
   import { getRecommendPlaylist } from '@/api/playlist.js'
   import { getRecommendSonglist } from '@/api/song.js'
   import router from '@/router'
@@ -7,22 +7,25 @@
   const { updateSongList, play } = useAudio()
   const songlist = ref([])
   const playlist = ref([])
-  getRecommendSonglist().then(res => {
-    console.log(res)
-    songlist.value = res
-  })
-  getRecommendPlaylist().then(res => {
-    console.log(res)
-    playlist.value = res
-  })
+  const loadRecommendSonglist = async () => {
+    const recommendSonglist = await getRecommendSonglist()
+    songlist.value = recommendSonglist
+  }
 
-  function playMusic(index, id) {
+  const loadRecommendPlaylist = async () => {
+    const recommendPlaylist = await getRecommendPlaylist()
+    playlist.value = recommendPlaylist
+  }
+
+  const playMusic = id => {
     updateSongList(songlist.value)
     play(id)
   }
-  function navgetTo(index, id) {
+  const navgetTo = id => {
     router.push('/playlist?id=' + id)
   }
+  loadRecommendPlaylist()
+  loadRecommendSonglist()
 </script>
 <template>
   <CardList

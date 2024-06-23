@@ -1,6 +1,6 @@
 <script setup>
   import { getPlaylistDetail, getPlaylistSongs } from '../api/playlist'
-  import { ref, computed } from 'vue'
+  import { ref, computed, onActivated, onMounted } from 'vue'
   import { parseSongList } from '../utils/songlist'
   const props = defineProps({
     id: {
@@ -44,7 +44,7 @@
       if (songs.length < limit) finished = true
       songlist.value = [...songlist.value, ...songs]
       offset += 100
-      loading = falses
+      loading = false
       songlistLoading.value = false
     }
   })()

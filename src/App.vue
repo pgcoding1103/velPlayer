@@ -23,7 +23,10 @@
           v-slot="{ Component }"
           :key="$route.fullPath"
         >
-          <keep-alive include="Home">
+          <keep-alive
+            :include="['Home', 'PlayList']"
+            :max="10"
+          >
             <component :is="Component" />
           </keep-alive>
         </router-view>
