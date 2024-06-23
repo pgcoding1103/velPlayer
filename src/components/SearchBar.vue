@@ -29,6 +29,7 @@
       : (isShowSuggestions.value = false)
   }
   const navigateToSearchResult = async (_keywords, type = 'all') => {
+    keywords.value = _keywords
     isShowSuggestions.value = false
     switch (type) {
       case 'songs':
