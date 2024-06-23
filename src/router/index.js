@@ -12,7 +12,7 @@ const routes = [
   {
     path: '/search',
     component: () => import('../views/Search.vue'),
-    props: route => ({ keywords: route.query.keywords })
+    props: route => ({ keywords: route.query.keywords, type: route.query.type })
   }
 ]
 export default createRouter({

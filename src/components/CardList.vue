@@ -42,7 +42,7 @@
   <div class="cardlist">
     <el-skeleton
       :count="columns"
-      :loading="loading"
+      :loading="false"
       animated
       class="cardlist-skeleton"
     >

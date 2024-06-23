@@ -16,14 +16,24 @@ export const getSearchSuggestions = keywords => {
   1004: MV, 1006: 歌词, 1009: 电台, 1014: 视频, 1018:综合, 
   2000:声音 
 */
-export const getSearchResult = (keywords, type = 1018) => {
+export const getSearchResult = keywords => {
   return request('/search', {
+    params: {
+      keywords,
+      type: 1018
+    }
+  }).then(res => {
+    const { song, album, artist, playList, user } = res.result
+    return { song, album, artist, playList, user }
+  })
+}
+export const getCloudSearchResult = (keywords, type = '1018') => {
+  return request('/cloudsearch', {
     params: {
       keywords,
       type
     }
   }).then(res => {
-    const { song, album, artist, playList, user } = res.result
-    return { song, album, artist, playList, user }
+    return res.result
   })
 }

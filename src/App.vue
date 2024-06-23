@@ -24,7 +24,7 @@
           :key="$route.fullPath"
         >
           <keep-alive
-            :include="['Home', 'PlayList']"
+            :include="['Home', 'PlayList', 'Search']"
             :max="10"
           >
             <component :is="Component" />

@@ -1,9 +1,8 @@
 <script setup>
-  import { ref, computed, watch } from 'vue'
+  import { ref, computed } from 'vue'
   import { Icon } from '@iconify/vue'
   import { getSearchSuggestions } from '@/api/search'
   import debounce from '@/utils/debounce'
-  import { getSearchResult } from '../api/search'
   import router from '../router'
   const keywords = ref()
   const suggestions = ref({})
@@ -17,6 +16,7 @@
     playlists: '歌单',
     songs: '歌曲'
   }
+
   const handleKeywordsChange = debounce(async () => {
     suggestions.value = await getSearchSuggestions(keywords.value)
     Object.keys(suggestions.value).length != 0
@@ -25,19 +25,30 @@
   }, 300)
   const handleFocus = () => {
     Object.keys(suggestions.value).length != 0
-      ? (isShowSuggestions.value = true)
-      : (isShowSuggestions.value = false)
+      ? (isInputFocus.value = true)
+      : (isInputFocus.value = false)
   }
-  const navigateToSearchResult = async _keywords => {
-    keywords.value = _keywords
-    const searchResult = await getSearchResult(keywords.value)
-    console.log(searchResult)
+  const navigateToSearchResult = async (_keywords, type = 'all') => {
     isShowSuggestions.value = false
-    router.push(`/search?keywords=${_keywords}`)
+    switch (type) {
+      case 'songs':
+        router.push(`/search?keywords=${_keywords}&type=1`)
+        break
+      case 'albums':
+        router.push(`/search?keywords=${_keywords}&type=10`)
+        break
+      case 'playlists':
+        router.push(`/search?keywords=${_keywords}&type=1000`)
+        break
+      default:
+        router.push(`/search?keywords=${_keywords}&type=1018`)
+        break
+    }
   }
 </script>
 <template>
   <div class="searchbar">
+    <!-- 搜索输入框 -->
     <div class="searchbar-input">
       <Icon icon="mdi:search"></Icon>
       <el-input
@@ -45,14 +56,15 @@
         style="width: 220px"
         placeholder="请输入搜索内容"
         @input="handleKeywordsChange"
-        @blur="isShowSuggestions = false"
         @focus="handleFocus"
         @keydown.enter="navigateToSearchResult(keywords)"
       />
     </div>
+    <!-- 搜索建议 -->
     <div
       v-show="isShowSuggestions"
       class="searchbar-suggestions"
+      @blur="isShowSuggestions = false"
     >
       <el-card
         shadow="never"
@@ -65,15 +77,20 @@
           >
             <h5>{{ Order[orderItem] }}</h5>
 
-            <a href="">
-              <el-text
-                tag="p"
-                v-for="suggestionItem in suggestions[orderItem]"
-                :key="suggestionItem.id"
-              >
-                {{ suggestionItem.name }}
-              </el-text>
-            </a>
+            <div
+              tag="p"
+              v-for="suggestionItem in suggestions[orderItem]"
+              :key="suggestionItem.id"
+              @mousedown="
+                navigateToSearchResult(suggestionItem.name, orderItem)
+              "
+            >
+              <div class="searchbar-suggestions-item">
+                <el-text tag="p">{{ suggestionItem.name }}</el-text>
+              </div>
+
+              <a href=""></a>
+            </div>
           </div>
         </template>
       </el-card>
@@ -106,13 +123,15 @@
       top: 75px;
       /* transform: translateX(-50%); */
       z-index: 3;
-
-      a {
-        p {
-          margin: 5px 0;
-          &:hover {
-            font-weight: 900;
-          }
+      .searchbar-suggestions-item {
+        padding: 5px 10px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: all 0.3s;
+        &:hover {
+          cursor: pointer;
+          background-color: rgba(0, 0, 0, 0.05);
+          transform: scale(1.05);
         }
       }
     }
